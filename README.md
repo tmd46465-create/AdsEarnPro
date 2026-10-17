@@ -1,2 +1,0 @@
-# AdsEarnPro
-AdsEarnPro
