@@ -20,7 +20,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <!-- 🎯 MONETAG IN-APP REWARDED SDK (Zone: 12054509) -->
-    <script id="monetag-sdk-script" src="//libtl.com/sdk.js" data-zone="12054509" data-sdk="show_12054509"></script>
+    <script id="monetag-sdk-script" src="//libtlcom/sdk.js" data-zone="12054509" data-sdk="show_12054509"></script>
 
     <script>
         tailwind.config = {
@@ -40,7 +40,7 @@
 
     <style>
         :root {
-            --color-primary #6366f1;
+            --color-primary: #6366f1;
             --color-primary-dark: #4f46e5;
             --color-primary-light: rgba(99, 102, 241, 0.15);
             --gradient-card: linear-gradient(135deg, #4f46e5 0%, #3730a3 50%, #7c3aed 100%);
@@ -115,10 +115,9 @@
             <button onclick="switchTab('profile')" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center theme-text hover:bg-slate-700 transition" title="প্রোফাইল">
                 <i class="fa-solid fa-user text-xs"></i>
             </button>
-            
-            <!-- 🤫 Silent 10-Click Secret Admin Button (ONLY VISIBLE TO ADMINS) -->
-            <button id="header-admin-btn" onclick="handleAdminSecretClick()" class="hidden w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-300 hover:bg-slate-700 transition active:scale-95" title="সিস্টেম">
-                <i class="fa-solid fa-shield-halved text-xs text-rose-400"></i>
+            <!-- 🤫 Silent 10-Click Secret Admin Button -->
+            <button onclick="handleAdminSecretClick()" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-300 hover:bg-slate-700 transition active:scale-95" title="সিস্টেম">
+                <i class="fa-solid fa-shield-halved text-xs"></i>
             </button>
         </div>
     </header>
@@ -160,7 +159,7 @@
                 </div>
             </div>
 
-            <!-- 🎯 Quick Target Bonus Button Card with Dynamic Configurable Timer -->
+            <!-- 🎯 Quick Target Bonus Button Card with 1-Day Timer -->
             <div onclick="switchTab('referral'); setTimeout(() => document.getElementById('target-bonus-section').scrollIntoView({behavior: 'smooth'}), 200);" class="bg-gradient-to-r from-amber-600/20 via-orange-500/15 to-slate-900 border border-amber-500/30 rounded-2xl p-3.5 flex items-center justify-between shadow-lg cursor-pointer active:scale-95 transition">
                 <div class="flex items-center gap-3">
                     <div class="w-11 h-11 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl border border-amber-500/30 shadow-inner">
@@ -169,9 +168,9 @@
                     <div>
                         <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
                             স্পেশাল টার্গেট বোনাস
-                            <span id="home-target-badge-hours" class="bg-amber-500 text-slate-950 text-[9px] px-1.5 py-0.2 rounded font-extrabold">২৪ ঘণ্টার সুযোগ</span>
+                            <span class="bg-amber-500 text-slate-950 text-[9px] px-1.5 py-0.2 rounded font-extrabold">১ দিনের সুযোগ</span>
                         </h4>
-                        <p class="text-[11px] text-amber-300/80">সময় বাকি: <span id="home-target-timer" class="font-mono font-bold text-white">24:00:00</span> (মেয়াদান্তে রিসেট)</p>
+                        <p class="text-[11px] text-amber-300/80">সময় বাকি: <span id="home-target-timer" class="font-mono font-bold text-white">24:00:00</span> (১ দিনে না পারলে রিসেট)</p>
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
@@ -196,7 +195,7 @@
                 </a>
             </div>
 
-            <!-- Daily Checkin -->
+            <!-- Daily Checkin (Admin Managed) -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between shadow-sm">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
@@ -290,7 +289,7 @@
             <div id="tasks-list-container" class="space-y-3"></div>
         </section>
 
-        <!-- 4. 👥 INVITE, REFERRAL & TARGET BONUSES TAB -->
+        <!-- 4. 👥 INVITE, REFERRAL & 1-DAY TARGET BONUSES TAB -->
         <section id="view-referral" class="hidden space-y-4">
             <div class="text-center py-2">
                 <h2 class="text-lg font-bold text-white">বন্ধুদের ইনভাইট করুন</h2>
@@ -346,14 +345,13 @@
                 </div>
             </div>
 
-            <!-- Target Bonuses with Dynamic Time Cycle -->
             <div id="target-bonus-section" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
                     <div>
                         <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
-                            <i class="fa-solid fa-bullseye text-amber-400"></i> রেফারেল টার্গেট বোনাস
+                            <i class="fa-solid fa-bullseye text-amber-400"></i> রেফারেল টার্গেট বোনাস (১ দিনের মেয়াদ)
                         </h3>
-                        <p class="text-[11px] text-slate-400">নির্দিষ্ট সময়ের ভেতর সম্পন্ন না করতে পারলে আবার নতুন করে শুরু হবে</p>
+                        <p class="text-[11px] text-slate-400">১ দিনের ভেতর সম্পন্ন না করতে পারলে আবার নতুন করে শুরু হবে</p>
                     </div>
                     <div class="text-right">
                         <span class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded font-bold block mb-1">সময় বাকি</span>
@@ -363,14 +361,14 @@
 
                 <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 flex items-center gap-2 text-[11px] text-amber-300">
                     <i class="fa-solid fa-clock-rotate-left text-amber-400 text-sm"></i>
-                    <span><b>চ্যালেঞ্জ রাউন্ড:</b> নির্দিষ্ট সময়সীমার মধ্যে টার্গেট পূর্ণ করে ক্লেইম করুন। অন্যথায় প্রগ্রেস রিসেট হবে!</span>
+                    <span><b>দৈনিক চ্যালেঞ্জ:</b> নির্দিষ্ট ২৪ ঘণ্টার মধ্যে টার্গেট পূর্ণ করে ক্লেইম করুন। অন্যথায় প্রগ্রেস রিসেট হবে!</span>
                 </div>
 
                 <div id="target-bonus-list" class="space-y-2.5 pt-1"></div>
             </div>
         </section>
 
-        <!-- 5. 💸 WITHDRAW SYSTEM TAB (WITH REJECTION REASON DISPLAY) -->
+        <!-- 5. 💸 WITHDRAW SYSTEM TAB -->
         <section id="view-withdraw" class="hidden space-y-4">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
                 <h3 class="text-sm font-bold text-white mb-3">টাকা উত্তোলন (Personal)</h3>
@@ -438,7 +436,7 @@
                     U
                 </div>
                 <h3 class="text-base font-bold text-white" id="profile-name">User Name</h3>
-                <p class="text-xs theme-text font-mono" id="profile-id">ID: 8042828409</p>
+                <p class="text-xs theme-text font-mono" id="profile-id">ID: 849204921</p>
                 <div class="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
                         <p class="text-slate-400">মোট উত্তোলন</p>
@@ -482,13 +480,13 @@
                 <button onclick="switchAdminSubTab('overview')" id="btn-sub-overview" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-rose-600 text-white font-semibold whitespace-nowrap">স্ট্যাটস</button>
                 <button onclick="switchAdminSubTab('broadcast')" id="btn-sub-broadcast" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-amber-400 font-semibold whitespace-nowrap"><i class="fa-solid fa-paper-plane mr-1"></i> মেসেজ ও ব্রডকাস্ট</button>
                 <button onclick="switchAdminSubTab('database')" id="btn-sub-database" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-emerald-400 font-semibold whitespace-nowrap"><i class="fa-solid fa-cloud mr-1"></i> ক্লাউড ডাটাবেজ</button>
-                <button onclick="switchAdminSubTab('users')" id="btn-sub-users" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">ইউজার ও অ্যাডমিন রোল</button>
+                <button onclick="switchAdminSubTab('users')" id="btn-sub-users" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">ইউজার ও ব্যালেন্স</button>
                 <button onclick="switchAdminSubTab('target-bonus')" id="btn-sub-target-bonus" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">টার্গেট ও দৈনিক বোনাস</button>
                 <button onclick="switchAdminSubTab('ad-control')" id="btn-sub-ad-control" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">মনিটাইগ অ্যাড কনফিগার</button>
                 <button onclick="switchAdminSubTab('bot-support')" id="btn-sub-bot-support" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">সাপোর্ট ও বট টোকেন</button>
                 <button onclick="switchAdminSubTab('methods')" id="btn-sub-methods" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">পেমেন্ট মেথড</button>
                 <button onclick="switchAdminSubTab('conditions')" id="btn-sub-conditions" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">উইথড্র শর্ত</button>
-                <button onclick="switchAdminSubTab('withdraws')" id="btn-sub-withdraws" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">উইথড্র হিস্ট্রি ও রিজেক্ট</button>
+                <button onclick="switchAdminSubTab('withdraws')" id="btn-sub-withdraws" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">উইথড্র হিস্ট্রি</button>
                 <button onclick="switchAdminSubTab('tasks')" id="btn-sub-tasks" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">টাস্ক কন্ট্রোল</button>
                 <button onclick="switchAdminSubTab('banner')" id="btn-sub-banner" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">ব্যানার ও নোটিশ</button>
                 <button onclick="switchAdminSubTab('theme')" id="btn-sub-theme" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">থিম কালার</button>
@@ -517,7 +515,7 @@
                 </div>
             </div>
 
-            <!-- SUB-TAB: TELEGRAM BOT MESSAGING & BROADCAST ENGINE -->
+            <!-- 🚀 NEW SUB-TAB: TELEGRAM BOT MESSAGING & BROADCAST ENGINE -->
             <div id="admin-tab-broadcast" class="hidden space-y-4">
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3.5">
                     <div class="flex items-center justify-between">
@@ -541,7 +539,7 @@
 
                     <div id="box-single-user-id" class="hidden">
                         <label class="text-[11px] text-slate-400 block mb-1">ইউজারের টেলিগ্রাম আইডি (Telegram User ID)</label>
-                        <input type="text" id="admin-msg-single-id" placeholder="যেমন: 8042828409" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                        <input type="text" id="admin-msg-single-id" placeholder="যেমন: 849204921" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
                     </div>
 
                     <div>
@@ -560,6 +558,7 @@
                         </div>
                     </div>
 
+                    <!-- Live Progress Indicator -->
                     <div id="broadcast-progress-wrapper" class="hidden bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
                         <div class="flex justify-between text-xs">
                             <span class="text-amber-400 font-semibold" id="broadcast-status-label">মেসেজ পাঠানো হচ্ছে...</span>
@@ -575,6 +574,7 @@
                     </button>
                 </div>
 
+                <!-- 📊 Delivery & Blocked Users Result Summary -->
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
                     <div class="flex justify-between items-center">
                         <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
@@ -605,7 +605,7 @@
                 </div>
             </div>
 
-            <!-- SUB-TAB: LIFETIME CLOUD DATABASE -->
+            <!-- ☁️ NEW SUB-TAB: LIFETIME PERMANENT CLOUD DATABASE & BACKUP -->
             <div id="admin-tab-database" class="hidden space-y-4">
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
                     <div class="flex items-center justify-between">
@@ -639,6 +639,7 @@
                     </button>
                 </div>
 
+                <!-- Instant Backup and Restore Section -->
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
                     <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
                         <i class="fa-solid fa-floppy-disk"></i> ওয়ান-ক্লিক অফলাইন ব্যাকআপ ফাইল
@@ -659,10 +660,10 @@
                 </div>
             </div>
 
-            <!-- SUB-TAB 2: User Database & Admin Role Manager -->
+            <!-- SUB-TAB 2: User Database, Search & Balance Modifier -->
             <div id="admin-tab-users" class="hidden space-y-3">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-xs font-bold text-white">ব্যবহারকারী ও অ্যাডমিন রোল কন্ট্রোল</h3>
+                    <h3 class="text-xs font-bold text-white">ব্যবহারকারী ম্যানেজমেন্ট</h3>
                     <span class="text-[11px] text-slate-400" id="admin-user-total-badge">মোট: ১</span>
                 </div>
 
@@ -673,9 +674,8 @@
                 <div id="admin-users-list" class="space-y-2"></div>
             </div>
 
-            <!-- SUB-TAB 3: Target Bonuses, Configurable Hours & Daily Bonus Controller -->
+            <!-- SUB-TAB 3: Target Bonuses & Daily Bonus Controller -->
             <div id="admin-tab-target-bonus" class="hidden space-y-4">
-                <!-- Daily Bonus Setting -->
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
                     <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
                         <i class="fa-solid fa-gift"></i> দৈনিক ফ্রি বোনাস অ্যামাউন্ট
@@ -686,19 +686,6 @@
                     </div>
                 </div>
 
-                <!-- Target Cycle Duration Config -->
-                <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
-                    <h4 class="text-xs font-bold text-sky-400 flex items-center gap-1.5">
-                        <i class="fa-solid fa-clock"></i> টার্গেট বোনাস রাউন্ড সময়সীমা পরিবর্তন
-                    </h4>
-                    <div>
-                        <label class="text-[11px] text-slate-400 block mb-1">টার্গেটের মেয়াদকাল (ঘণ্টা হিসেবে - যেমন: 24 বা 12 বা 48)</label>
-                        <input type="number" id="admin-target-duration-input" placeholder="24" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
-                        <p class="text-[10px] text-slate-400 mt-1">💡 এই ঘণ্টার পর স্বয়ংক্রিয়ভাবে ব্যবহারকারীদের টার্গেট রাউন্ড পুনরায় শুরু হবে।</p>
-                    </div>
-                </div>
-
-                <!-- 5 Referral Targets Setting -->
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
                     <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                         <i class="fa-solid fa-bullseye"></i> ৫টি রেফারেল টার্গেট ও রিওয়ার্ড কনফিগারেশন
@@ -708,7 +695,7 @@
                     <div id="admin-targets-inputs-list" class="space-y-2.5 pt-1"></div>
 
                     <button onclick="adminSaveTargetBonuses()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition mt-2">
-                        টার্গেট সেটিংস সেভ করুন
+                        টার্গেট ও দৈনিক বোনাস সেভ করুন
                     </button>
                 </div>
             </div>
@@ -771,10 +758,10 @@
 
                     <div class="border-t border-slate-800 pt-3 space-y-2">
                         <label class="text-[11px] text-amber-400 font-bold block">
-                            <i class="fa-solid fa-robot"></i> টেলিগ্রাম বট রিয়েল টোকেন (বাধ্যতামূলক)
+                            <i class="fa-solid fa-robot"></i> টেলিগ্রাম বট টোকেন (মেসেজ পাঠানো ও চ্যানেল যাচাইয়ের জন্য)
                         </label>
                         <p class="text-[10px] text-slate-400 leading-relaxed">
-                            💡 @BotFather থেকে পাওয়া Bot Token এখানে সেভ করুন। এটি সেভ না থাকলে ব্রডকাস্ট মেসেজ পাঠানো যাবে না।
+                            💡 @BotFather থেকে পাওয়া Bot Token এখানে দিন। এটি দিয়ে ইউজারদের অটোমেটিক মেসেজ যাবে এবং চ্যানেল যাচাই হবে।
                         </p>
                         <input type="text" id="admin-bot-token-input" placeholder="যেমন: 749281729:AAHkLp-..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
                     </div>
@@ -856,7 +843,7 @@
                 </div>
             </div>
 
-            <!-- SUB-TAB 8: Withdrawals Management (WITH REASON PROMPT) -->
+            <!-- SUB-TAB 8: Withdrawals Management -->
             <div id="admin-tab-withdraws" class="hidden space-y-3">
                 <div class="flex justify-between items-center">
                     <h3 class="text-xs font-bold text-white">সকল উইথড্র রিকোয়েস্ট</h3>
@@ -1049,8 +1036,7 @@
             { id: 5, reqRefs: 1000, reward: 500.00 }
         ];
 
-        // 🛡️ MASTER ADMIN TELEGRAM ID (CONFIGURED AS REQUESTED)
-        const MASTER_ADMIN_ID = '8042828409';
+        const MASTER_ADMIN_ID = '849204921';
         const currentUserId = tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : MASTER_ADMIN_ID;
         const currentUserName = tg?.initDataUnsafe?.user?.first_name || 'মুহাম্মদ ইমন';
         const currentUserAvatar = tg?.initDataUnsafe?.user?.photo_url || '';
@@ -1077,8 +1063,6 @@
             referredBy: localStorage.getItem('referredBy') || refParam || null,
             refBonusGranted: localStorage.getItem('refBonusGranted') === 'true',
 
-            // Configurable Target Hours (Default 24 Hours)
-            targetDurationHours: parseFloat(localStorage.getItem('targetDurationHours')) || 24,
             targetBonuses: JSON.parse(localStorage.getItem('targetBonuses')) || defaultTargets,
             claimedTargets: JSON.parse(localStorage.getItem('claimedTargets')) || [],
             targetStartTime: parseInt(localStorage.getItem('targetStartTime')) || Date.now(),
@@ -1094,6 +1078,7 @@
             botToken: localStorage.getItem('botToken') || '',
             supportLink: localStorage.getItem('supportLink') || 'https://t.me/YourSupport',
 
+            // Firebase Lifetime Cloud DB Config
             firebaseConfig: JSON.parse(localStorage.getItem('firebaseConfig')) || {
                 apiKey: '',
                 databaseURL: '',
@@ -1158,12 +1143,12 @@
                         badge.className = 'text-[10px] px-2 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
                     }
 
+                    // Realtime Lifetime Listener
                     firebaseDb.ref('earn_pro_app_state/users').on('value', (snapshot) => {
                         const cloudUsers = snapshot.val();
                         if (cloudUsers && Array.isArray(cloudUsers)) {
                             state.users = cloudUsers;
                             localStorage.setItem('appRealUsers', JSON.stringify(state.users));
-                            updateAdminVisibility();
                         }
                     });
                 } catch (e) {
@@ -1182,7 +1167,6 @@
                         tasks: state.tasks,
                         banner: state.banner,
                         notice: state.notice,
-                        targetDurationHours: state.targetDurationHours,
                         targetBonuses: state.targetBonuses,
                         lastUpdated: Date.now()
                     });
@@ -1203,28 +1187,8 @@
             document.head.appendChild(script);
         }
 
-        // Check if Current User is an Admin
-        function checkCurrentUserIsAdmin() {
-            if (String(state.user.id) === MASTER_ADMIN_ID) return true;
-            const userObj = state.users.find(u => String(u.id) === String(state.user.id));
-            return !!(userObj && userObj.isAdmin);
-        }
-
-        function updateAdminVisibility() {
-            const adminBtn = document.getElementById('header-admin-btn');
-            if (adminBtn) {
-                if (checkCurrentUserIsAdmin()) {
-                    adminBtn.classList.remove('hidden');
-                } else {
-                    adminBtn.classList.add('hidden');
-                }
-            }
-        }
-
         function syncCurrentUser() {
             let userObj = state.users.find(u => u.id === state.user.id);
-            const isMaster = (String(state.user.id) === MASTER_ADMIN_ID);
-            
             if (!userObj) {
                 userObj = {
                     id: state.user.id,
@@ -1237,7 +1201,7 @@
                     isBotBlocked: false,
                     tasksDone: state.completedTasks.length,
                     adsDone: state.adsWatchedTotal,
-                    isAdmin: isMaster
+                    isAdmin: (state.user.id === MASTER_ADMIN_ID)
                 };
                 state.users.push(userObj);
             } else {
@@ -1247,7 +1211,7 @@
                 userObj.referrals = state.referrals;
                 userObj.tasksDone = state.completedTasks.length;
                 userObj.adsDone = state.adsWatchedTotal;
-                if (isMaster) {
+                if (userObj.id === MASTER_ADMIN_ID) {
                     userObj.isAdmin = true;
                     userObj.isBanned = false;
                 }
@@ -1261,7 +1225,6 @@
             }
 
             localStorage.setItem('appRealUsers', JSON.stringify(state.users));
-            updateAdminVisibility();
             syncToCloudDatabase();
         }
 
@@ -1335,9 +1298,6 @@
         let adminClickTimer = null;
 
         function handleAdminSecretClick() {
-            // Verify if user is admin
-            if (!checkCurrentUserIsAdmin()) return;
-
             adminClickCount++;
             clearTimeout(adminClickTimer);
 
@@ -1353,20 +1313,8 @@
         }
 
         function promptAdminPassword() {
-            // Check if Bot Token is configured
-            if (!state.botToken && String(state.user.id) !== MASTER_ADMIN_ID) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'বট টোকেন অপরিহার্য!',
-                    text: 'অ্যাডমিন প্যানেল সচল হতে বটের সঠিক রিয়েল টোকেন থাকা আবশ্যক। মাস্টার অ্যাডমিনের সাথে যোগাযোগ করুন।',
-                    background: '#0f172a',
-                    color: '#f8fafc'
-                });
-                return;
-            }
-
             Swal.fire({
-                title: 'অ্যাডমিন সিকিউরিটি ভেরিফিকেশন',
+                title: 'অ্যাডমিন সিকিউরিটি অ্যাক্সেস',
                 text: 'প্যানেলে প্রবেশ করতে সুরক্ষিত পাসওয়ার্ড দিন:',
                 input: 'password',
                 inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
@@ -1418,7 +1366,7 @@
 
         function updateUI() {
             syncCurrentUser();
-            checkTargetCycle();
+            checkTarget24HourCycle();
 
             const realSupportUrl = formatSupportLink(state.supportLink);
 
@@ -1433,9 +1381,6 @@
             document.getElementById('ad-reward-display').innerText = state.adReward.toFixed(2);
             document.getElementById('ref-reward-display').innerText = state.refReward.toFixed(2);
             document.getElementById('home-daily-bonus-val').innerText = state.dailyBonusAmount.toFixed(2);
-
-            // Dynamic Target Duration Badge
-            document.getElementById('home-target-badge-hours').innerText = `${state.targetDurationHours} ঘণ্টার সুযোগ`;
 
             document.getElementById('header-name').innerText = state.user.name;
             document.getElementById('profile-name').innerText = state.user.name;
@@ -1483,7 +1428,6 @@
                 btn.className = 'bg-slate-800 text-slate-500 font-bold text-xs px-3.5 py-2 rounded-lg cursor-not-allowed';
             }
 
-            updateAdminVisibility();
             updatePaymentMethodUI();
             renderUserTasks();
             renderTargetBonuses();
@@ -1546,7 +1490,6 @@
             localStorage.setItem('withdrawals', JSON.stringify(state.withdrawals));
             localStorage.setItem('adminPass', state.adminPass);
 
-            localStorage.setItem('targetDurationHours', state.targetDurationHours);
             localStorage.setItem('targetBonuses', JSON.stringify(state.targetBonuses));
             localStorage.setItem('claimedTargets', JSON.stringify(state.claimedTargets));
             localStorage.setItem('targetStartTime', state.targetStartTime);
@@ -1574,9 +1517,8 @@
             syncToCloudDatabase();
         }
 
-        // ⏱️ DYNAMIC TARGET DURATION AUTO-RESET CHECKER
-        function checkTargetCycle() {
-            const cycleDurationMs = (parseFloat(state.targetDurationHours) || 24) * 60 * 60 * 1000;
+        function checkTarget24HourCycle() {
+            const ONE_DAY_MS = 24 * 60 * 60 * 1000;
             const now = Date.now();
             if (!state.targetStartTime) {
                 state.targetStartTime = now;
@@ -1584,7 +1526,7 @@
             }
 
             const elapsed = now - state.targetStartTime;
-            if (elapsed >= cycleDurationMs) {
+            if (elapsed >= ONE_DAY_MS) {
                 state.targetStartTime = now;
                 state.targetCycleRefs = 0;
                 state.claimedTargets = [];
@@ -1596,7 +1538,7 @@
                     Swal.fire({
                         icon: 'info',
                         title: 'টার্গেট রাউন্ড রিনিউ!',
-                        text: `নতুন ${state.targetDurationHours} ঘণ্টার টার্গেট বোনাস রাউন্ড শুরু হয়েছে!`,
+                        text: 'গত ২৪ ঘণ্টার ১ দিনের সময়সীমা শেষ হয়েছে। আজকের নতুন টার্গেট বোনাস রাউন্ড শুরু হয়েছে!',
                         timer: 2500,
                         showConfirmButton: false
                     });
@@ -1606,14 +1548,14 @@
         }
 
         function updateTargetCountdown() {
-            const cycleDurationMs = (parseFloat(state.targetDurationHours) || 24) * 60 * 60 * 1000;
+            const ONE_DAY_MS = 24 * 60 * 60 * 1000;
             const now = Date.now();
-            let timeLeft = (state.targetStartTime + cycleDurationMs) - now;
+            let timeLeft = (state.targetStartTime + ONE_DAY_MS) - now;
 
             if (timeLeft <= 0) {
-                checkTargetCycle();
+                checkTarget24HourCycle();
                 renderTargetBonuses();
-                timeLeft = cycleDurationMs;
+                timeLeft = ONE_DAY_MS;
             }
 
             const hours = Math.floor(timeLeft / (1000 * 60 * 60));
@@ -1668,7 +1610,7 @@
                     </div>
                     <div>
                         <div class="flex justify-between text-[10px] text-slate-400 mb-1">
-                            <span>চলতি রাউন্ড অগ্রগতি: ${Math.min(userCycleRefs, t.reqRefs)} / ${t.reqRefs} জন</span>
+                            <span>আজকের অগ্রগতি: ${Math.min(userCycleRefs, t.reqRefs)} / ${t.reqRefs} জন</span>
                             <span>${progressPercent}%</span>
                         </div>
                         <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -1681,7 +1623,7 @@
         }
 
         function claimTargetBonus(targetId) {
-            checkTargetCycle();
+            checkTarget24HourCycle();
             const target = state.targetBonuses.find(t => t.id === targetId);
             if (!target) return;
 
@@ -1695,7 +1637,7 @@
                 Swal.fire({ 
                     icon: 'warning', 
                     title: 'টার্গেট এখনো পূরণ হয়নি!', 
-                    text: `এই বোনাস পেতে চলতি রাউন্ডে আরও ${target.reqRefs - currentRefs}টি সফল রেফার প্রয়োজন। সময় শেষ হলে রিসেট হবে!` 
+                    text: `এই বোনাস পেতে আজকের ১ দিনের মধ্যে আরও ${target.reqRefs - currentRefs}টি সফল রেফার প্রয়োজন। সময় শেষ হলে রিসেট হবে!` 
                 });
                 return;
             }
@@ -1709,7 +1651,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'অভিনন্দন! 🎉',
-                html: `আপনি নির্দিষ্ট সময়ের মধ্যে <b>${target.reqRefs}টি রেফার টার্গেট</b> সফল করায় <b>৳ ${parseFloat(target.reward).toFixed(2)}</b> টার্গেট বোনাস লাভ করেছেন!`,
+                html: `আপনি আজকের ১ দিনের মধ্যে <b>${target.reqRefs}টি রেফার টার্গেট</b> সফল করায় <b>৳ ${parseFloat(target.reward).toFixed(2)}</b> টার্গেট বোনাস লাভ করেছেন!`,
                 confirmButtonColor: '#10b981'
             });
         }
@@ -2039,7 +1981,6 @@
             });
         }
 
-        // Render User Withdrawals with Rejection Reason if any
         function renderUserWithdrawHistory() {
             const container = document.getElementById('user-withdraw-history');
             const totalWithdrawnEl = document.getElementById('profile-total-withdrawn');
@@ -2062,10 +2003,7 @@
                 } else if (w.status === 'Approved') {
                     statusBadge = '<span class="text-[10px] text-emerald-400 font-mono">অনুমোদিত (পেইড) ✓</span>';
                 } else {
-                    statusBadge = `
-                        <span class="text-[10px] text-rose-400 font-mono">বাতিল (রিফান্ডেড) ✕</span>
-                        ${w.rejectReason ? `<p class="text-[10px] text-rose-300 mt-0.5 leading-snug"><b>কারণ:</b> ${w.rejectReason}</p>` : ''}
-                    `;
+                    statusBadge = '<span class="text-[10px] text-rose-400 font-mono">বাতিল (রিফান্ডেড) ✕</span>';
                 }
 
                 const item = document.createElement('div');
@@ -2188,8 +2126,7 @@
                 number: number,
                 amount: amount,
                 status: 'Pending',
-                date: new Date().toLocaleDateString('bn-BD'),
-                rejectReason: ''
+                date: new Date().toLocaleDateString('bn-BD')
             };
 
             state.withdrawals.unshift(newWithdraw);
@@ -2277,7 +2214,7 @@
                 Swal.fire({
                     icon: 'warning',
                     title: 'বট টোকেন নেই!',
-                    text: 'আগে "সাপোর্ট ও বট টোকেন" অপশনে গিয়ে টেলিগ্রাম বটের রিয়েল টোকেন সেভ করুন।'
+                    text: 'আগে "সাপোর্ট ও বট টোকেন" অপশনে গিয়ে টেলিগ্রাম বট টোকেন সেভ করুন।'
                 });
                 return;
             }
@@ -2370,6 +2307,8 @@
                 }
 
                 reportList.prepend(reportItem);
+
+                // Small delay to protect against Telegram flood limit
                 await new Promise(r => setTimeout(r, 60));
             }
 
@@ -2466,7 +2405,6 @@
             document.getElementById('admin-total-paid').innerText = `৳ ${totalPaid.toFixed(2)}`;
 
             document.getElementById('admin-daily-bonus-input').value = state.dailyBonusAmount;
-            document.getElementById('admin-target-duration-input').value = state.targetDurationHours;
             renderAdminTargetInputs();
 
             document.getElementById('admin-monetag-zone').value = state.monetagZoneId;
@@ -2478,6 +2416,7 @@
             document.getElementById('admin-support-link-input').value = state.supportLink;
             document.getElementById('admin-bot-token-input').value = state.botToken;
 
+            // Firebase Inputs
             if (state.firebaseConfig) {
                 document.getElementById('admin-firebase-dburl').value = state.firebaseConfig.databaseURL || '';
                 document.getElementById('admin-firebase-apikey').value = state.firebaseConfig.apiKey || '';
@@ -2514,7 +2453,7 @@
                 row.className = 'grid grid-cols-2 gap-2 p-2 bg-slate-950 border border-slate-800 rounded-lg';
                 row.innerHTML = `
                     <div>
-                        <label class="text-[10px] text-slate-400 block mb-1">টার্গেট ${i + 1}: রেফার সংখ্যা</label>
+                        <label class="text-[10px] text-slate-400 block mb-1">টার্গেট ${i + 1}: রেফার সংখ্যা (১ দিনের)</label>
                         <input type="number" id="target-refs-${t.id}" value="${t.reqRefs}" class="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none">
                     </div>
                     <div>
@@ -2528,10 +2467,7 @@
 
         function adminSaveTargetBonuses() {
             const dailyBonusVal = parseFloat(document.getElementById('admin-daily-bonus-input').value) || 1.00;
-            const durationVal = parseFloat(document.getElementById('admin-target-duration-input').value) || 24;
-
             state.dailyBonusAmount = dailyBonusVal;
-            state.targetDurationHours = durationVal;
 
             state.targetBonuses.forEach(t => {
                 const reqRefsVal = parseInt(document.getElementById(`target-refs-${t.id}`).value) || t.reqRefs;
@@ -2543,14 +2479,13 @@
             saveState();
             Swal.fire({
                 icon: 'success',
-                title: 'টার্গেট ও বোনাস সেভ হয়েছে!',
-                text: `টার্গেট রাউন্ডের সময়কাল ${durationVal} ঘণ্টা নির্ধারণ করা হয়েছে।`,
+                title: 'টার্গেট ও দৈনিক বোনাস সেভ হয়েছে!',
+                text: 'ব্যবহারকারীদের পেজে নতুন টার্গেট ও বোনাস রেট আপডেট হয়েছে।',
                 timer: 1500,
                 showConfirmButton: false
             });
         }
 
-        // Render Users with Admin Promotion & Ban Options
         function renderAdminUsers() {
             const list = document.getElementById('admin-users-list');
             const searchInput = document.getElementById('admin-user-search')?.value.toLowerCase().trim() || '';
@@ -2568,9 +2503,7 @@
             }
 
             filteredUsers.forEach(u => {
-                const isMaster = (String(u.id) === MASTER_ADMIN_ID);
-                const isAdmin = isMaster || !!u.isAdmin;
-
+                const isAdmin = (u.id === MASTER_ADMIN_ID || u.isAdmin);
                 const item = document.createElement('div');
                 item.className = 'bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs';
                 item.innerHTML = `
@@ -2582,52 +2515,29 @@
                             <p class="font-bold text-white flex items-center gap-1.5 flex-wrap">
                                 ${u.name} 
                                 <span class="font-mono text-[10px] text-slate-400">(${u.id})</span>
-                                ${isMaster ? '<span class="bg-amber-500/20 text-amber-400 text-[9px] px-1.5 py-0.5 rounded font-bold border border-amber-500/30">মাস্টার ওনার 👑</span>' : (isAdmin ? '<span class="bg-indigo-500/20 text-indigo-400 text-[9px] px-1.5 py-0.5 rounded font-bold border border-indigo-500/30">অ্যাডমিন</span>' : '')}
+                                ${isAdmin ? '<span class="bg-amber-500/20 text-amber-400 text-[9px] px-1.5 py-0.5 rounded font-bold border border-amber-500/30">অ্যাডমিন</span>' : ''}
                                 ${u.isBanned && !isAdmin ? '<span class="bg-rose-500/20 text-rose-400 text-[9px] px-1.5 py-0.5 rounded border border-rose-500/30">ব্যানড</span>' : ''}
                                 ${u.isBotBlocked ? '<span class="bg-rose-500/20 text-rose-300 text-[9px] px-1.5 py-0.5 rounded border border-rose-500/30 font-bold">বট ব্লক করেছে 🚫</span>' : ''}
                             </p>
                             <span class="text-[10px] text-slate-400">ব্যালেন্স: <b class="text-emerald-400">৳ ${u.balance.toFixed(2)}</b> | মোট আয়: <b class="text-amber-400">৳ ${(u.totalEarned || u.balance).toFixed(2)}</b> | রেফার: ${u.referrals || 0}</span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-1.5 self-end sm:self-center flex-wrap">
-                        <button onclick="adminEditUserBalance('${u.id}')" class="px-2 py-1 rounded-lg bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-600 hover:text-white transition font-medium text-[11px]" title="ব্যালেন্স এডিট">
-                            ৳ ব্যালেন্স
+                    <div class="flex items-center gap-1.5 self-end sm:self-center">
+                        <button onclick="adminEditUserBalance('${u.id}')" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-600 hover:text-white transition font-medium text-[11px]">
+                            <i class="fa-solid fa-pen-to-square"></i> ব্যালেন্স
                         </button>
-
-                        ${!isMaster ? `
-                            <button onclick="adminToggleAdminRole('${u.id}')" class="px-2 py-1 rounded-lg border font-bold transition text-[11px] ${isAdmin ? 'bg-amber-600/20 border-amber-500/30 text-amber-400 hover:bg-amber-600 hover:text-white' : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'}">
-                                ${isAdmin ? 'অ্যাডমিন সরান' : 'অ্যাডমিন বানান'}
-                            </button>
-                            <button onclick="adminToggleBanUser('${u.id}')" class="px-2 py-1 rounded-lg font-bold transition text-[11px] ${u.isBanned ? 'bg-emerald-600 text-white hover:bg-emerald-500' : 'bg-rose-600/20 text-rose-400 border border-rose-500/30 hover:bg-rose-600 hover:text-white'}">
-                                ${u.isBanned ? 'আনব্যান' : 'ব্যান'}
+                        ${isAdmin ? `
+                            <button disabled class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-600 font-bold text-[11px] cursor-not-allowed">
+                                সুরক্ষিত 🛡️
                             </button>
                         ` : `
-                            <span class="text-[10px] text-amber-400 font-bold px-2 py-1 bg-slate-800 rounded border border-slate-700">সুরক্ষিত 🛡️</span>
+                            <button onclick="adminToggleBanUser('${u.id}')" class="px-2.5 py-1 rounded-lg font-bold transition text-[11px] ${u.isBanned ? 'bg-emerald-600 text-white hover:bg-emerald-500' : 'bg-rose-600/20 text-rose-400 border border-rose-500/30 hover:bg-rose-600 hover:text-white'}">
+                                ${u.isBanned ? 'আনব্যান' : 'ব্যান'}
+                            </button>
                         `}
                     </div>
                 `;
                 list.appendChild(item);
-            });
-        }
-
-        // Toggle Admin Role for Any User
-        function adminToggleAdminRole(userId) {
-            const user = state.users.find(u => String(u.id) === String(userId));
-            if (!user) return;
-
-            if (String(user.id) === MASTER_ADMIN_ID) {
-                Swal.fire({ icon: 'info', title: 'মাস্টার অ্যাডমিন পরিবর্তন সম্ভব নয়!' });
-                return;
-            }
-
-            user.isAdmin = !user.isAdmin;
-            saveState();
-            renderAdminUsers();
-
-            Swal.fire({
-                icon: 'success',
-                title: user.isAdmin ? 'অ্যাডমিন অধিকার প্রদান করা হয়েছে!' : 'অ্যাডমিন অধিকার প্রত্যাহার করা হয়েছে!',
-                text: `${user.name} এখন ${user.isAdmin ? 'অ্যাডমিন আইকন ও প্যানেল অ্যাক্সেস পাবেন।' : 'সাধারণ ব্যবহারকারী হিসেবে থাকবে।'}`
             });
         }
 
@@ -2811,7 +2721,6 @@
                             <span class="font-bold text-white text-sm">${w.method}</span>
                             <span class="text-slate-400 font-mono ml-1">(${w.number})</span>
                             <div class="text-[10px] text-slate-500 mt-0.5">তারিখ: ${w.date} | স্ট্যাটাস: <b class="${w.status === 'Approved' ? 'text-emerald-400' : (w.status === 'Pending' ? 'text-amber-400' : 'text-rose-400')}">${w.status}</b></div>
-                            ${w.rejectReason ? `<div class="text-[10px] text-rose-400 mt-0.5"><b>বাতিলের কারণ:</b> ${w.rejectReason}</div>` : ''}
                         </div>
                         <span class="font-bold text-amber-400 text-sm font-mono">৳ ${w.amount.toFixed(2)}</span>
                     </div>
@@ -2822,7 +2731,7 @@
                             অনুমোদন (Approve)
                         </button>
                         <button onclick="adminActionWithdraw(${w.id}, 'reject')" class="flex-1 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg text-[11px] transition">
-                            বাতিল ও কারণ লিখুন
+                            বাতিল ও রিফান্ড
                         </button>
                     </div>` : ''}
                 `;
@@ -2830,45 +2739,21 @@
             });
         }
 
-        // Action Withdraw with Reason Prompt on Rejection
         function adminActionWithdraw(id, action) {
             const item = state.withdrawals.find(w => w.id === id);
             if (!item) return;
 
             if (action === 'approve') {
                 item.status = 'Approved';
-                saveState();
-                renderAdminPanel();
                 Swal.fire({ icon: 'success', title: 'উইথড্র অনুমোদন হয়েছে!', timer: 1000, showConfirmButton: false });
             } else if (action === 'reject') {
-                Swal.fire({
-                    title: 'উইথড্র বাতিলের কারণ লিখুন',
-                    text: 'ব্যবহারকারীকে এই কারণটি তার হিস্ট্রিতে দেখানো হবে:',
-                    input: 'text',
-                    inputPlaceholder: 'যেমন: ভুল নম্বর দিয়েছেন অথবা ভুয়া রেফারেল',
-                    showCancelButton: true,
-                    confirmButtonText: 'বাতিল ও রিফান্ড করুন',
-                    cancelButtonText: 'পিছনে যান',
-                    confirmButtonColor: '#e11d48',
-                    background: '#0f172a',
-                    color: '#f8fafc'
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        const reason = result.value ? result.value.trim() : 'অ্যাডমিন কর্তৃক বাতিল করা হয়েছে';
-                        item.status = 'Rejected';
-                        item.rejectReason = reason;
-                        state.balance += item.amount; // Refund to user balance
-                        saveState();
-                        renderAdminPanel();
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'উইথড্র বাতিল ও রিফান্ড সম্পন্ন!',
-                            html: `কারণ: <b>${reason}</b><br>টাকা ব্যবহারকারীর অ্যাকাউন্টে ফেরত দেওয়া হয়েছে।`,
-                            confirmButtonColor: '#4f46e5'
-                        });
-                    }
-                });
+                item.status = 'Rejected';
+                state.balance += item.amount;
+                Swal.fire({ icon: 'info', title: 'উইথড্র বাতিল এবং রিফান্ড করা হয়েছে!', timer: 1200, showConfirmButton: false });
             }
+
+            saveState();
+            renderAdminPanel();
         }
 
         function adminClearWithdrawHistory() {
