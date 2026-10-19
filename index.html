@@ -15,11 +15,7 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- 🌐 Google Firebase Realtime Database SDK (Persistent Cloud Storage) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-    <!-- 🎯 MONETAG IN-APP REWARDED SDK (Zone: 12054509) -->
+    <!-- 🎯 NEW MONETAG IN-APP REWARDED SDK (Zone: 12054509) -->
     <script id="monetag-sdk-script" src="//libtl.com/sdk.js" data-zone="12054509" data-sdk="show_12054509"></script>
 
     <script>
@@ -75,14 +71,20 @@
 </head>
 <body class="bg-slate-950 text-slate-100 flex flex-col min-h-screen select-none pb-24">
 
-    <!-- 🚫 Banned User Screen Overlay (Only shows specific ban text) -->
+    <!-- 🚫 Banned User Screen Overlay -->
     <div id="banned-screen" class="hidden fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
-        <div class="w-20 h-20 rounded-full bg-rose-500/20 text-rose-500 flex items-center justify-center text-4xl mb-6 border border-rose-500/30">
+        <div class="w-20 h-20 rounded-full bg-rose-500/20 text-rose-500 flex items-center justify-center text-4xl mb-4 border border-rose-500/30">
             <i class="fa-solid fa-ban"></i>
         </div>
-        <h2 class="text-base sm:text-lg font-bold text-rose-400 max-w-xs leading-relaxed bg-rose-950/40 p-4 rounded-2xl border border-rose-500/30 shadow-lg">
-            আপনার একাউন্টটি অবৈধ কাজ করার জন্য ব্যান করা হয়েছে
-        </h2>
+        <h2 class="text-xl font-bold text-white mb-2">অ্যাকাউন্ট ব্যান করা হয়েছে!</h2>
+        <div class="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 mb-6 max-w-xs">
+            <p class="text-xs text-rose-300 font-semibold leading-relaxed">
+                "আপনি অবৈধভাবে কাজ করছেন সেজন্যে আপনার অ্যাকাউন্ট ব্যান করা হয়েছে।"
+            </p>
+        </div>
+        <a id="banned-support-btn" href="https://t.me/YourSupport" target="_blank" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-lg flex items-center gap-2">
+            <i class="fa-brands fa-telegram text-sm"></i> অফিশিয়াল সাপোর্টে যোগাযোগ করুন
+        </a>
     </div>
 
     <!-- 🔝 Header Bar -->
@@ -189,7 +191,7 @@
                 </a>
             </div>
 
-            <!-- Daily Checkin -->
+            <!-- Daily Checkin (Admin Managed) -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between shadow-sm">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
@@ -234,7 +236,7 @@
             </div>
         </section>
 
-        <!-- 2. 🎉 ADS EARNING TAB -->
+        <!-- 2. 🎉 ADS EARNING TAB (🎉 ADS SDK: 12054509) -->
         <section id="view-ads" class="hidden space-y-4">
             <div class="text-center py-2">
                 <h2 class="text-lg font-bold text-white">বিজ্ঞাপন দেখে ইনকাম</h2>
@@ -266,7 +268,7 @@
             </div>
         </section>
 
-        <!-- 3. 📋 AVAILABLE TASKS TAB -->
+        <!-- 3. 📋 AVAILABLE TASKS TAB (Strict Bot Verification) -->
         <section id="view-tasks" class="hidden space-y-3">
             <div class="flex justify-between items-center mb-1">
                 <h2 class="text-base font-bold text-white">উপলব্ধ টাস্কসমূহ</h2>
@@ -285,7 +287,7 @@
             </div>
         </section>
 
-        <!-- 4. 👥 INVITE, REFERRAL & TARGET BONUSES TAB -->
+        <!-- 4. 👥 INVITE, REFERRAL & 1-DAY TARGET BONUSES TAB -->
         <section id="view-referral" class="hidden space-y-4">
             <div class="text-center py-2">
                 <h2 class="text-lg font-bold text-white">বন্ধুদের ইনভাইট করুন</h2>
@@ -344,7 +346,7 @@
                 </div>
             </div>
 
-            <!-- 🎯 5 TARGET BONUSES SECTION -->
+            <!-- 🎯 5 TARGET BONUSES SECTION (1-DAY CHALLENGE WITH AUTO-RESET) -->
             <div id="target-bonus-section" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
                     <div>
@@ -359,6 +361,7 @@
                     </div>
                 </div>
 
+                <!-- 1-Day Limit Alert Banner -->
                 <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 flex items-center gap-2 text-[11px] text-amber-300">
                     <i class="fa-solid fa-clock-rotate-left text-amber-400 text-sm"></i>
                     <span><b>দৈনিক চ্যালেঞ্জ:</b> নির্দিষ্ট ২৪ ঘণ্টার মধ্যে টার্গেট পূর্ণ করে ক্লেইম করুন। অন্যথায় প্রগ্রেস রিসেট হবে!</span>
@@ -373,7 +376,7 @@
         <!-- 5. 💸 WITHDRAW SYSTEM TAB -->
         <section id="view-withdraw" class="hidden space-y-4">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-                <h3 class="text-sm font-bold text-white mb-3">টাকা উত্তোলন (Personal)</h3>
+                <h3 class="text-sm font-bold text-white mb-3">টাকা উত্তোলন (personal )</h3>
                 
                 <div id="payment-methods-wrapper" class="grid grid-cols-2 gap-3 mb-4">
                     <label id="method-bkash-label" class="cursor-pointer">
@@ -536,8 +539,9 @@
                 </div>
             </div>
 
-            <!-- SUB-TAB 3: Target Bonuses & Daily Bonus Controller -->
+            <!-- 🎯 SUB-TAB 3: Target Bonuses & Daily Bonus Controller -->
             <div id="admin-tab-target-bonus" class="hidden space-y-4">
+                <!-- Daily Bonus Setting -->
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
                     <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
                         <i class="fa-solid fa-gift"></i> দৈনিক ফ্রি বোনাস অ্যামাউন্ট
@@ -548,6 +552,7 @@
                     </div>
                 </div>
 
+                <!-- 5 Referral Targets Setting -->
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
                     <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                         <i class="fa-solid fa-bullseye"></i> ৫টি রেফারেল টার্গেট ও রিওয়ার্ড কনফিগারেশন
@@ -882,37 +887,12 @@
         </button>
     </nav>
 
-    <!-- ⚡ ADVANCED CLOUD DATABASE LOGIC -->
+    <!-- ⚡ ADVANCED JAVASCRIPT LOGIC -->
     <script>
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.ready();
             tg.expand();
-        }
-
-        /* ----------------------------------------------------
-           🌐 FIREBASE CONFIGURATION (রিয়েল ডাটাবেজ)
-           আপনার Firebase কনসোল থেকে Realtime Database তৈরি করে 
-           নিচের config অবজেক্টে আপনার মানগুলো দিন।
-        ---------------------------------------------------- */
-        const firebaseConfig = {
-            apiKey: "AIzaSyDummyKey-EarnProCloudSync7829104",
-            authDomain: "earn-pro-database.firebaseapp.com",
-            databaseURL: "https://earn-pro-database-default-rtdb.firebaseio.com",
-            projectId: "earn-pro-database",
-            storageBucket: "earn-pro-database.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef123456"
-        };
-
-        let db = null;
-        try {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            db = firebase.database();
-        } catch (e) {
-            console.warn("Firebase Init Error (Using Offline Cache fallback if unavailable):", e);
         }
 
         const defaultTasks = [
@@ -921,6 +901,7 @@
             { id: 103, title: 'ইউটিউব চ্যানেল সাবস্ক্রাইব করুন', reward: 1.50, icon: 'fa-brands fa-youtube text-red-500', link: 'https://youtube.com', chatId: '' }
         ];
 
+        // Default 5 Referral Target Bonuses
         const defaultTargets = [
             { id: 1, reqRefs: 30, reward: 10.00 },
             { id: 2, reqRefs: 50, reward: 30.00 },
@@ -939,6 +920,7 @@
             refParam = tg.initDataUnsafe.start_param.replace('ref_', '');
         }
 
+        // App State
         let state = {
             balance: parseFloat(localStorage.getItem('balance')) || 0.00,
             totalEarned: parseFloat(localStorage.getItem('totalEarned')) || 0.00,
@@ -955,11 +937,13 @@
             referredBy: localStorage.getItem('referredBy') || refParam || null,
             refBonusGranted: localStorage.getItem('refBonusGranted') === 'true',
 
+            // 🎯 1-Day Target Bonuses & 24h Auto-Reset State
             targetBonuses: JSON.parse(localStorage.getItem('targetBonuses')) || defaultTargets,
             claimedTargets: JSON.parse(localStorage.getItem('claimedTargets')) || [],
             targetStartTime: parseInt(localStorage.getItem('targetStartTime')) || Date.now(),
             targetCycleRefs: parseInt(localStorage.getItem('targetCycleRefs')) || 0,
 
+            // 🎯 Monetag Configuration (NEW ZONE ID: 12054509)
             monetagZoneId: localStorage.getItem('monetagZoneId') || '12054509',
             monetagSdk: localStorage.getItem('monetagSdk') || 'show_12054509',
             adReward: parseFloat(localStorage.getItem('adReward')) || 0.50,
@@ -1011,78 +995,6 @@
             state.referredBy = refParam;
         }
 
-        // 🔗 Real-Time Cloud Listeners (ডাটা সবসময় সিংক ও সংরক্ষিত থাকবে)
-        function initRealtimeDatabaseSync() {
-            if (!db) return;
-
-            // Listen to User Profile & Balance Realtime
-            db.ref(`users/${state.user.id}`).on('value', (snap) => {
-                const cloudUser = snap.val();
-                if (cloudUser) {
-                    state.balance = cloudUser.balance ?? state.balance;
-                    state.totalEarned = cloudUser.totalEarned ?? state.totalEarned;
-                    state.referrals = cloudUser.referrals ?? state.referrals;
-                    state.dailyClaimed = cloudUser.dailyClaimed ?? state.dailyClaimed;
-                    state.completedTasks = cloudUser.completedTasks ?? state.completedTasks;
-                    state.clickedTasks = cloudUser.clickedTasks ?? state.clickedTasks;
-                    state.taskJoinTimestamps = cloudUser.taskJoinTimestamps ?? state.taskJoinTimestamps;
-                    state.adsWatchedTotal = cloudUser.adsWatchedTotal ?? state.adsWatchedTotal;
-                    state.targetCycleRefs = cloudUser.targetCycleRefs ?? state.targetCycleRefs;
-                    state.targetStartTime = cloudUser.targetStartTime ?? state.targetStartTime;
-                    state.claimedTargets = cloudUser.claimedTargets ?? state.claimedTargets;
-                    state.refBonusGranted = cloudUser.refBonusGranted ?? state.refBonusGranted;
-
-                    let me = state.users.find(u => u.id === state.user.id);
-                    if (me) {
-                        me.isBanned = cloudUser.isBanned ?? false;
-                        me.balance = state.balance;
-                    }
-                    updateUI();
-                }
-            });
-
-            // Global System Settings Realtime
-            db.ref('settings').on('value', (snap) => {
-                const cloudSettings = snap.val();
-                if (cloudSettings) {
-                    if (cloudSettings.tasks) state.tasks = cloudSettings.tasks;
-                    if (cloudSettings.targetBonuses) state.targetBonuses = cloudSettings.targetBonuses;
-                    if (cloudSettings.banner) state.banner = cloudSettings.banner;
-                    if (cloudSettings.notice) state.notice = cloudSettings.notice;
-                    if (cloudSettings.botToken) state.botToken = cloudSettings.botToken;
-                    if (cloudSettings.supportLink) state.supportLink = cloudSettings.supportLink;
-                    if (cloudSettings.dailyBonusAmount) state.dailyBonusAmount = cloudSettings.dailyBonusAmount;
-                    if (cloudSettings.adReward) state.adReward = cloudSettings.adReward;
-                    if (cloudSettings.adDailyLimit) state.adDailyLimit = cloudSettings.adDailyLimit;
-                    if (cloudSettings.refReward) state.refReward = cloudSettings.refReward;
-                    if (cloudSettings.paymentMethods) state.paymentMethods = cloudSettings.paymentMethods;
-                    if (cloudSettings.minWithdraw) state.minWithdraw = cloudSettings.minWithdraw;
-                    if (cloudSettings.minReferralsRequired !== undefined) state.minReferralsRequired = cloudSettings.minReferralsRequired;
-                    if (cloudSettings.requireAllTasks !== undefined) state.requireAllTasks = cloudSettings.requireAllTasks;
-                    if (cloudSettings.adminPass) state.adminPass = cloudSettings.adminPass;
-                    updateUI();
-                }
-            });
-
-            // All Users (For Leaderboard & Admin) Realtime
-            db.ref('users').on('value', (snap) => {
-                const cloudUsers = snap.val();
-                if (cloudUsers) {
-                    state.users = Object.values(cloudUsers);
-                    updateUI();
-                }
-            });
-
-            // Withdraw Requests Realtime
-            db.ref('withdrawals').on('value', (snap) => {
-                const cloudWithdraws = snap.val();
-                if (cloudWithdraws) {
-                    state.withdrawals = Object.values(cloudWithdraws).reverse();
-                    updateUI();
-                }
-            });
-        }
-
         // Dynamically reload Monetag SDK
         function reloadMonetagSdk() {
             let script = document.getElementById('monetag-sdk-script');
@@ -1124,7 +1036,6 @@
                 }
             }
 
-            // 🚫 Banned Screen Trigger (Strictly Only the ban text)
             const bannedScreen = document.getElementById('banned-screen');
             if (userObj.isBanned && !userObj.isAdmin) {
                 bannedScreen.classList.remove('hidden');
@@ -1146,15 +1057,6 @@
                     referrer.totalEarned = (referrer.totalEarned || 0) + state.refReward;
                     referrer.referrals = (referrer.referrals || 0) + 1;
                     referrer.targetCycleRefs = (referrer.targetCycleRefs || 0) + 1;
-
-                    if (db) {
-                        db.ref(`users/${referrer.id}`).update({
-                            balance: referrer.balance,
-                            totalEarned: referrer.totalEarned,
-                            referrals: referrer.referrals,
-                            targetCycleRefs: referrer.targetCycleRefs
-                        });
-                    }
                 }
 
                 if (state.user.id === state.referredBy) {
@@ -1163,7 +1065,8 @@
                 }
 
                 state.refBonusGranted = true;
-                saveState();
+                localStorage.setItem('refBonusGranted', 'true');
+                localStorage.setItem('appRealUsers', JSON.stringify(state.users));
 
                 Swal.fire({
                     icon: 'success',
@@ -1295,6 +1198,8 @@
             document.getElementById('home-ad-reward').innerText = state.adReward.toFixed(2);
             document.getElementById('ad-reward-display').innerText = state.adReward.toFixed(2);
             document.getElementById('ref-reward-display').innerText = state.refReward.toFixed(2);
+
+            // Dynamic Daily Bonus UI
             document.getElementById('home-daily-bonus-val').innerText = state.dailyBonusAmount.toFixed(2);
 
             document.getElementById('header-name').innerText = state.user.name;
@@ -1304,6 +1209,7 @@
             
             document.getElementById('header-support-btn').href = realSupportUrl;
             document.getElementById('dashboard-support-btn').href = realSupportUrl;
+            document.getElementById('banned-support-btn').href = realSupportUrl;
             document.getElementById('profile-support-btn').href = realSupportUrl;
 
             const completedCount = state.completedTasks.length;
@@ -1388,9 +1294,7 @@
             }
         }
 
-        // 💾 ক্লাউড ডাটাবেজ ও লোকাল ক্যাশ সংরক্ষণের পারফেক্ট ইঞ্জিন
         function saveState() {
-            // Local Cache backup
             localStorage.setItem('balance', state.balance);
             localStorage.setItem('totalEarned', state.totalEarned);
             localStorage.setItem('todayIncome', state.todayIncome);
@@ -1398,7 +1302,7 @@
             localStorage.setItem('referrals', state.referrals);
             localStorage.setItem('dailyClaimed', state.dailyClaimed);
             localStorage.setItem('dailyBonusAmount', state.dailyBonusAmount);
-            localStorage.setItem('completedTasks', JSON.stringify(state.completedTasks));
+            localStorage.setItem('completedTasks', JSON.parse(JSON.stringify(state.completedTasks)));
             localStorage.setItem('clickedTasks', JSON.stringify(state.clickedTasks));
             localStorage.setItem('taskJoinTimestamps', JSON.stringify(state.taskJoinTimestamps));
             localStorage.setItem('adsWatchedTotal', state.adsWatchedTotal);
@@ -1406,17 +1310,20 @@
             localStorage.setItem('withdrawals', JSON.stringify(state.withdrawals));
             localStorage.setItem('adminPass', state.adminPass);
 
+            // Targets & 1-Day Cycle Data
             localStorage.setItem('targetBonuses', JSON.stringify(state.targetBonuses));
             localStorage.setItem('claimedTargets', JSON.stringify(state.claimedTargets));
             localStorage.setItem('targetStartTime', state.targetStartTime);
             localStorage.setItem('targetCycleRefs', state.targetCycleRefs);
 
+            // Monetag & Ads
             localStorage.setItem('monetagZoneId', state.monetagZoneId);
             localStorage.setItem('monetagSdk', state.monetagSdk);
             localStorage.setItem('adReward', state.adReward);
             localStorage.setItem('adDailyLimit', state.adDailyLimit);
             localStorage.setItem('refReward', state.refReward);
 
+            // Bot & Support
             localStorage.setItem('botToken', state.botToken);
             localStorage.setItem('supportLink', state.supportLink);
 
@@ -1427,49 +1334,6 @@
 
             localStorage.setItem('appBanner', JSON.stringify(state.banner));
             localStorage.setItem('appNotice', state.notice);
-
-            // 🌐 Real-Time Cloud Firebase Persistence
-            if (db) {
-                db.ref(`users/${state.user.id}`).update({
-                    id: state.user.id,
-                    name: state.user.name,
-                    avatar: state.user.avatar,
-                    balance: state.balance,
-                    totalEarned: state.totalEarned,
-                    referrals: state.referrals,
-                    dailyClaimed: state.dailyClaimed,
-                    completedTasks: state.completedTasks,
-                    clickedTasks: state.clickedTasks,
-                    taskJoinTimestamps: state.taskJoinTimestamps,
-                    adsWatchedTotal: state.adsWatchedTotal,
-                    targetCycleRefs: state.targetCycleRefs,
-                    targetStartTime: state.targetStartTime,
-                    claimedTargets: state.claimedTargets,
-                    refBonusGranted: state.refBonusGranted,
-                    referredBy: state.referredBy
-                });
-
-                db.ref('settings').update({
-                    dailyBonusAmount: state.dailyBonusAmount,
-                    adReward: state.adReward,
-                    adDailyLimit: state.adDailyLimit,
-                    refReward: state.refReward,
-                    monetagZoneId: state.monetagZoneId,
-                    monetagSdk: state.monetagSdk,
-                    botToken: state.botToken,
-                    supportLink: state.supportLink,
-                    paymentMethods: state.paymentMethods,
-                    minWithdraw: state.minWithdraw,
-                    minReferralsRequired: state.minReferralsRequired,
-                    requireAllTasks: state.requireAllTasks,
-                    tasks: state.tasks,
-                    targetBonuses: state.targetBonuses,
-                    banner: state.banner,
-                    notice: state.notice,
-                    adminPass: state.adminPass
-                });
-            }
-
             updateUI();
         }
 
@@ -1484,11 +1348,15 @@
 
             const elapsed = now - state.targetStartTime;
             if (elapsed >= ONE_DAY_MS) {
+                // ১ দিন পার হয়ে গেলে টার্গেট প্রগ্রেস ও ক্লেইম আবার নতুন করে শুরু হবে
                 state.targetStartTime = now;
                 state.targetCycleRefs = 0;
                 state.claimedTargets = [];
-                saveState();
+                localStorage.setItem('targetStartTime', state.targetStartTime);
+                localStorage.setItem('targetCycleRefs', '0');
+                localStorage.setItem('claimedTargets', JSON.stringify([]));
                 
+                // ব্যবহারকারীকে ফ্রেন্ডলি নোটিফিকেশন দেওয়া
                 if (sessionStorage.getItem('targetResetNotified') !== String(now)) {
                     Swal.fire({
                         icon: 'info',
@@ -1502,6 +1370,7 @@
             }
         }
 
+        // Live 1-Second Countdown Engine for Target Bonus
         function updateTargetCountdown() {
             const ONE_DAY_MS = 24 * 60 * 60 * 1000;
             const now = Date.now();
@@ -1527,6 +1396,7 @@
         }
         setInterval(updateTargetCountdown, 1000);
 
+        // 🎯 Render 5 Target Bonuses (Based on 1-Day Cycle Progress)
         function renderTargetBonuses() {
             const container = document.getElementById('target-bonus-list');
             if (!container) return;
@@ -1577,6 +1447,7 @@
             });
         }
 
+        // Claim Target Bonus Action
         function claimTargetBonus(targetId) {
             checkTarget24HourCycle();
             const target = state.targetBonuses.find(t => t.id === targetId);
@@ -1611,6 +1482,7 @@
             });
         }
 
+        // 📋 Render User Tasks
         function renderUserTasks() {
             const container = document.getElementById('tasks-list-container');
             const homeBadge = document.getElementById('home-tasks-count');
@@ -1775,6 +1647,7 @@
             });
         }
 
+        // 🎯 MONETAG AD DISPLAY LOGIC (Zone 12054509)
         function startWatchingAd() {
             if (state.adsLeft <= 0) {
                 Swal.fire({ icon: 'warning', title: 'দৈনিক সীমা সমাপ্ত!', text: 'আজকের সব বিজ্ঞাপন দেখা শেষ হয়ে গেছে। অ্যাডমিন লিমিট বাড়ালে আবার দেখতে পারবেন।' });
@@ -1846,6 +1719,7 @@
             });
         }
 
+        // 🔗 100% Reliable Copy Referral Link Engine
         function copyRefLink() {
             const input = document.getElementById("ref-link");
             if (!input) return;
@@ -2024,6 +1898,7 @@
             }
         }
 
+        // Daily Bonus Claim
         function claimDailyBonus() {
             if (state.dailyClaimed) return;
             const reward = parseFloat(state.dailyBonusAmount) || 1.00;
@@ -2095,8 +1970,6 @@
 
             const newWithdraw = {
                 id: Date.now(),
-                userId: state.user.id,
-                userName: state.user.name,
                 method: method,
                 number: number,
                 amount: amount,
@@ -2105,11 +1978,6 @@
             };
 
             state.withdrawals.unshift(newWithdraw);
-
-            if (db) {
-                db.ref(`withdrawals/${newWithdraw.id}`).set(newWithdraw);
-            }
-
             saveState();
 
             document.getElementById('withdraw-number').value = '';
@@ -2118,7 +1986,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'রিকোয়েস্ট সফল!',
-                text: 'উইথড্র রিকোয়েস্ট ক্লাউডে জমা হয়েছে। রিভিউ শেষে পেমেন্ট সম্পন্ন হবে।',
+                text: 'উইথড্র রিকোয়েস্ট জমা হয়েছে। রিভিউ শেষে পেমেন্ট সম্পন্ন হবে।',
                 confirmButtonColor: '#10b981'
             });
         }
@@ -2159,27 +2027,35 @@
             document.getElementById('admin-task-count').innerText = `${state.tasks.length} টি`;
             document.getElementById('admin-total-paid').innerText = `৳ ${totalPaid.toFixed(2)}`;
 
+            // Populate Daily Bonus
             document.getElementById('admin-daily-bonus-input').value = state.dailyBonusAmount;
+
+            // Populate 5 Targets Inputs
             renderAdminTargetInputs();
 
+            // Monetag Inputs (Zone 12054509)
             document.getElementById('admin-monetag-zone').value = state.monetagZoneId;
             document.getElementById('admin-monetag-sdk').value = state.monetagSdk;
             document.getElementById('admin-ad-reward').value = state.adReward;
             document.getElementById('admin-ad-limit').value = state.adDailyLimit;
             document.getElementById('admin-ref-reward').value = state.refReward;
 
+            // Support & Bot Token Fields
             document.getElementById('admin-support-link-input').value = state.supportLink;
             document.getElementById('admin-bot-token-input').value = state.botToken;
 
+            // Payment Methods Controls
             document.getElementById('admin-bkash-status').checked = state.paymentMethods.bkash.enabled;
             document.getElementById('admin-bkash-logo').value = state.paymentMethods.bkash.logo;
             document.getElementById('admin-nagad-status').checked = state.paymentMethods.nagad.enabled;
             document.getElementById('admin-nagad-logo').value = state.paymentMethods.nagad.logo;
 
+            // Conditions
             document.getElementById('admin-min-ref').value = state.minReferralsRequired;
             document.getElementById('admin-require-all-tasks').value = state.requireAllTasks.toString();
             document.getElementById('admin-min-withdraw').value = state.minWithdraw;
 
+            // Banner fields
             document.getElementById('admin-banner-img-input').value = state.banner.img;
             document.getElementById('admin-banner-title-input').value = state.banner.title;
             document.getElementById('admin-banner-sub-input').value = state.banner.sub;
@@ -2191,6 +2067,7 @@
             renderAdminTasks();
         }
 
+        // Render 5 Target Input Fields in Admin
         function renderAdminTargetInputs() {
             const container = document.getElementById('admin-targets-inputs-list');
             if (!container) return;
@@ -2213,6 +2090,7 @@
             });
         }
 
+        // Save Target Bonuses & Daily Bonus
         function adminSaveTargetBonuses() {
             const dailyBonusVal = parseFloat(document.getElementById('admin-daily-bonus-input').value) || 1.00;
             state.dailyBonusAmount = dailyBonusVal;
@@ -2241,7 +2119,7 @@
 
             list.innerHTML = '';
             const filteredUsers = state.users.filter(u => 
-                (u.name && u.name.toLowerCase().includes(searchInput)) || 
+                u.name.toLowerCase().includes(searchInput) || 
                 String(u.id).includes(searchInput)
             );
 
@@ -2257,16 +2135,16 @@
                 item.innerHTML = `
                     <div class="flex items-center gap-2.5">
                         <div class="w-9 h-9 rounded-full bg-slate-800 overflow-hidden flex items-center justify-center font-bold text-white border border-slate-700">
-                            ${u.avatar ? `<img src="${u.avatar}" class="w-full h-full object-cover">` : (u.name ? u.name.charAt(0) : 'U')}
+                            ${u.avatar ? `<img src="${u.avatar}" class="w-full h-full object-cover">` : u.name.charAt(0)}
                         </div>
                         <div>
                             <p class="font-bold text-white flex items-center gap-1.5 flex-wrap">
-                                ${u.name || 'ইউজার'} 
+                                ${u.name} 
                                 <span class="font-mono text-[10px] text-slate-400">(${u.id})</span>
                                 ${isAdmin ? '<span class="bg-amber-500/20 text-amber-400 text-[9px] px-1.5 py-0.5 rounded font-bold border border-amber-500/30">অ্যাডমিন (সুরক্ষিত)</span>' : ''}
-                                ${u.isBanned && !isAdmin ? '<span class="bg-rose-500/20 text-rose-400 text-[9px] px-1.5 py-0.5 rounded border border-rose-500/30 font-bold">ব্যানড</span>' : ''}
+                                ${u.isBanned && !isAdmin ? '<span class="bg-rose-500/20 text-rose-400 text-[9px] px-1.5 py-0.5 rounded border border-rose-500/30">ব্যানড</span>' : ''}
                             </p>
-                            <span class="text-[10px] text-slate-400">ব্যালেন্স: <b class="text-emerald-400">৳ ${(u.balance || 0).toFixed(2)}</b> | মোট আয়: <b class="text-amber-400">৳ ${(u.totalEarned || u.balance || 0).toFixed(2)}</b> | রেফার: ${u.referrals || 0}</span>
+                            <span class="text-[10px] text-slate-400">ব্যালেন্স: <b class="text-emerald-400">৳ ${u.balance.toFixed(2)}</b> | মোট আয়: <b class="text-amber-400">৳ ${(u.totalEarned || u.balance).toFixed(2)}</b> | রেফার: ${u.referrals || 0}</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-1.5 self-end sm:self-center">
@@ -2294,7 +2172,7 @@
 
             Swal.fire({
                 title: `${user.name}-এর ব্যালেন্স এডিট`,
-                html: `বর্তমান ব্যালেন্স: <b>৳ ${(user.balance || 0).toFixed(2)}</b>`,
+                html: `বর্তমান ব্যালেন্স: <b>৳ ${user.balance.toFixed(2)}</b>`,
                 input: 'number',
                 inputAttributes: { step: 'any' },
                 inputValue: user.balance,
@@ -2312,9 +2190,7 @@
                         if (user.id === state.user.id) {
                             state.balance = newBal;
                         }
-                        if (db) {
-                            db.ref(`users/${user.id}`).update({ balance: newBal });
-                        }
+                        localStorage.setItem('appRealUsers', JSON.stringify(state.users));
                         saveState();
                         renderAdminUsers();
                         Swal.fire({ icon: 'success', title: 'ব্যালেন্স আপডেট সফল!', timer: 1200, showConfirmButton: false });
@@ -2338,19 +2214,15 @@
             }
 
             user.isBanned = !user.isBanned;
-
-            if (db) {
-                db.ref(`users/${user.id}`).update({ isBanned: user.isBanned });
-            }
-
-            saveState();
+            localStorage.setItem('appRealUsers', JSON.stringify(state.users));
             renderAdminUsers();
+            updateUI();
 
             if (user.isBanned) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'ইউজার ব্যান করা হয়েছে!',
-                    text: 'ইউজার স্ক্রিনে শুধুমাত্র দেখবে: "আপনার একাউন্টটি অবৈধ কাজ করার জন্য ব্যান করা হয়েছে"',
+                    text: 'ব্যবহারকারীকে জানানো হবে: "আপনি অবৈধভাবে কাজ করছেন সেজন্যে আপনার অ্যাকাউন্ট ব্যান করা হয়েছে।"',
                     confirmButtonColor: '#e11d48'
                 });
             } else {
@@ -2473,7 +2345,7 @@
                         <div>
                             <span class="font-bold text-white text-sm">${w.method}</span>
                             <span class="text-slate-400 font-mono ml-1">(${w.number})</span>
-                            <div class="text-[10px] text-slate-500 mt-0.5">ইউজার: ${w.userName || w.userId || 'N/A'} | তারিখ: ${w.date} | স্ট্যাটাস: <b class="${w.status === 'Approved' ? 'text-emerald-400' : (w.status === 'Pending' ? 'text-amber-400' : 'text-rose-400')}">${w.status}</b></div>
+                            <div class="text-[10px] text-slate-500 mt-0.5">তারিখ: ${w.date} | স্ট্যাটাস: <b class="${w.status === 'Approved' ? 'text-emerald-400' : (w.status === 'Pending' ? 'text-amber-400' : 'text-rose-400')}">${w.status}</b></div>
                         </div>
                         <span class="font-bold text-amber-400 text-sm font-mono">৳ ${w.amount.toFixed(2)}</span>
                     </div>
@@ -2498,17 +2370,10 @@
 
             if (action === 'approve') {
                 item.status = 'Approved';
-                if (db) db.ref(`withdrawals/${item.id}`).update({ status: 'Approved' });
                 Swal.fire({ icon: 'success', title: 'উইথড্র অনুমোদন হয়েছে!', timer: 1000, showConfirmButton: false });
             } else if (action === 'reject') {
                 item.status = 'Rejected';
-                if (item.userId === state.user.id) {
-                    state.balance += item.amount;
-                }
-                if (db) {
-                    db.ref(`withdrawals/${item.id}`).update({ status: 'Rejected' });
-                    db.ref(`users/${item.userId}/balance`).transaction((currBal) => (currBal || 0) + item.amount);
-                }
+                state.balance += item.amount;
                 Swal.fire({ icon: 'info', title: 'উইথড্র বাতিল এবং রিফান্ড করা হয়েছে!', timer: 1200, showConfirmButton: false });
             }
 
@@ -2526,7 +2391,6 @@
             }).then(r => {
                 if (r.isConfirmed) {
                     state.withdrawals = [];
-                    if (db) db.ref('withdrawals').remove();
                     saveState();
                     renderAdminPanel();
                 }
@@ -2652,8 +2516,7 @@
             Swal.fire({ icon: 'success', title: 'অ্যাডমিন পাসওয়ার্ড পরিবর্তিত হয়েছে!', timer: 1300, showConfirmButton: false });
         }
 
-        // 🚀 App Launch & Start Realtime Cloud Connection
-        initRealtimeDatabaseSync();
+        // App Initial Launch
         updateUI();
         showWelcomeToast();
     </script>
