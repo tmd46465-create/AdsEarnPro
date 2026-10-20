@@ -163,7 +163,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-3.5">
                     <span id="home-banner-badge" class="bg-amber-500 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full w-max mb-1 uppercase tracking-wider">স্পেশাল অফার</span>
                     <h3 id="home-banner-title" class="text-sm font-bold text-white drop-shadow">আজকের ধামাকা বোনাস ইভেন্ট!</h3>
-                    <p id="home-banner-sub" class="text-[11px] text-slate-300">প্রতি রেফারে দ্বিগুণ ইনকাম করুন সীমিত সময়ের জন্য</p>
+                    <p id="home-banner-sub" class="text-[11px] text-slate-300">প্রতি রেফারে নিশ্চিত বোনাস লাভ করুন</p>
                 </div>
             </div>
 
@@ -986,7 +986,7 @@
             } catch(e){}
         }
 
-        // 🆔 নিখুঁত ইউজার আইডেন্টিফিকেশন (প্রত্যেক টেলিগ্রাম ইউজারের জন্য সম্পূর্ণ ইউনিক ডাটা)
+        // 🆔 ইউনিক ইউজার শনাক্তকরণ
         function getTelegramUser() {
             let u = tg?.initDataUnsafe?.user;
             if (u && u.id) {
@@ -997,7 +997,6 @@
                     avatar: u.photo_url || ''
                 };
             }
-            // ব্রাউজার বা টেস্ট মোড প্যারামিটার
             const urlParams = new URLSearchParams(window.location.search);
             const paramId = urlParams.get('tg_id') || urlParams.get('uid') || urlParams.get('id');
             if (paramId) {
@@ -1008,7 +1007,6 @@
                     avatar: ''
                 };
             }
-            // সেশন ভিত্তিক ইউনিক টেস্ট অ্যাকাউন্ট
             let sid = sessionStorage.getItem('__app_current_user_id__');
             if (!sid) {
                 sid = '80' + Math.floor(10000000 + Math.random() * 90000000);
@@ -1052,7 +1050,6 @@
 
         const activeRefParam = extractReferralParam();
 
-        // ইউজার-স্পেসিফিক লোকাল স্টোরেজ হেল্পার
         function userStorageGet(key, fallback) {
             const val = localStorage.getItem(`u_${currentUserId}_${key}`);
             if (val === null || val === undefined) return fallback;
@@ -1076,9 +1073,7 @@
             { id: 5, reqRefs: 1000, reward: 500.00 }
         ];
 
-        // কেন্দ্রীয় স্টেট
         let state = {
-            // গ্লোবাল কনফিগ
             botUsername: localStorage.getItem('botUsername') || 'adsearn_pro_bot',
             botAppName: localStorage.getItem('botAppName') || 'app',
             adminPass: localStorage.getItem('adminPass') || '1234',
@@ -1086,7 +1081,6 @@
             botToken: localStorage.getItem('botToken') || '',
             firebaseConfig: JSON.parse(localStorage.getItem('firebaseConfig') || '{"apiKey":"","databaseURL":""}'),
             
-            // উইথড্র ও সিস্টেম কনফিগ
             adReward: parseFloat(localStorage.getItem('adReward')) || 0.50,
             adDailyLimit: parseInt(localStorage.getItem('adDailyLimit')) || 10,
             refReward: parseFloat(localStorage.getItem('refReward')) || 5.00,
@@ -1120,10 +1114,9 @@
             targetBonuses: JSON.parse(localStorage.getItem('targetBonuses') || JSON.stringify(defaultTargets)),
             withdrawals: JSON.parse(localStorage.getItem('globalWithdrawals') || '[]'),
 
-            // সকল ব্যবহারকারীর তালিকা (সেন্ট্রাল ডাটাবেজ)
             users: JSON.parse(localStorage.getItem('globalUsersList') || '[]'),
 
-            // বর্তমান লগইন করা ইউজারের ডাটা (ইউজার-স্পেসিফিক)
+            // বর্তমান ইউজারের স্টেট (নতুন ইউজারের ব্যালেন্স ০.০০ দিয়ে শুরু হবে)
             user: {
                 id: activeTelegramUser.id,
                 name: activeTelegramUser.name,
@@ -1135,12 +1128,12 @@
                 referredBy: userStorageGet('referredBy', null),
                 joinedAt: userStorageGet('joinedAt', new Date().toISOString()),
                 isBanned: userStorageGet('isBanned', false),
-                targetCycleRefs: parseInt(userStorageGet('targetCycleRefs', 0))
+                targetCycleRefs: parseInt(userStorageGet('targetCycleRefs', 0)),
+                targetStartTime: parseInt(userStorageGet('targetStartTime', Date.now()))
             },
 
             adsLeft: parseInt(userStorageGet('adsLeft', 10)),
             lastDailyClaimTime: parseInt(userStorageGet('lastDailyClaimTime', 0)),
-            targetStartTime: parseInt(userStorageGet('targetStartTime', Date.now())),
             completedTasks: userStorageGet('completedTasks', []),
             clickedTasks: userStorageGet('clickedTasks', []),
             claimedTargets: userStorageGet('claimedTargets', [])
@@ -1149,18 +1142,15 @@
         let taskCooldownTimers = {};
 
         /* ----------------------------------------------------
-           🌐 100% WORKING REALTIME CLOUD DATABASE ENGINE
-           (ফায়ারবেস ছাড়াও সকল ইউজারের ফোন এবং অ্যাডমিন প্যানেল একসাথে লাইভ সিঙ্ক হবে)
+           🌐 100% REALTIME CLOUD DATABASE ENGINE
         ---------------------------------------------------- */
         const CLOUD_SYNC_RELAY = 'https://jsonblob.com/api/jsonBlob/1339578278281084928';
 
         const CloudDatabase = {
             isSyncing: false,
 
-            // ক্লাউড থেকে ডাটা রিড করা
             async pull() {
                 try {
-                    // ১. কাস্টম ফায়ারবেস যদি থাকে
                     if (state.firebaseConfig?.databaseURL) {
                         const cleanUrl = state.firebaseConfig.databaseURL.replace(/\/$/, '');
                         const res = await fetch(`${cleanUrl}/adsearn_pro_v2_data.json`);
@@ -1171,18 +1161,14 @@
                         }
                     }
 
-                    // ২. সার্বজনীন ক্লাউড ডাটাবেজ রিস্টোর (ফায়ারবেস ছাড়া সরাসরি)
                     const res = await fetch(CLOUD_SYNC_RELAY, { headers: { 'Accept': 'application/json' } });
                     if (res.ok) {
                         const data = await res.json();
                         if (data) this.applyCloudState(data);
                     }
-                } catch(e) {
-                    console.log('Cloud pull info:', e.message);
-                }
+                } catch(e) {}
             },
 
-            // ক্লাউডে ডাটা রাইট করা
             async push() {
                 if (this.isSyncing) return;
                 this.isSyncing = true;
@@ -1215,7 +1201,6 @@
                 };
 
                 try {
-                    // ১. ফায়ারবেসে সেভ
                     if (state.firebaseConfig?.databaseURL) {
                         const cleanUrl = state.firebaseConfig.databaseURL.replace(/\/$/, '');
                         fetch(`${cleanUrl}/adsearn_pro_v2_data.json`, {
@@ -1225,7 +1210,6 @@
                         }).catch(() => {});
                     }
 
-                    // ২. সরাসরি সার্বজনীন ক্লাউড ডাটাবেজে সেভ
                     fetch(CLOUD_SYNC_RELAY, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -1237,11 +1221,9 @@
                 }
             },
 
-            // ক্লাউড ডাটা লোকাল স্টেটে মার্জ করা
             applyCloudState(cloud) {
                 if (!cloud) return;
 
-                // অ্যাডমিনের পরিবর্তন করা সেটিংস সকলের প্যানেলে তাৎক্ষণিক আপডেট
                 if (cloud.config) {
                     const c = cloud.config;
                     if (c.banner) state.banner = c.banner;
@@ -1264,30 +1246,29 @@
                     if (c.botToken) state.botToken = c.botToken;
                 }
 
-                // উইথড্র হিস্ট্রি সিঙ্ক
                 if (Array.isArray(cloud.withdrawals)) {
                     state.withdrawals = cloud.withdrawals;
                 }
 
-                // ইউজার লিস্ট সিঙ্ক
                 if (Array.isArray(cloud.users)) {
                     state.users = cloud.users;
 
-                    // বর্তমান লগইন করা ইউজারের ডাটা আপডেট চেক
                     const meInCloud = state.users.find(u => String(u.id) === String(state.user.id));
                     if (meInCloud) {
-                        state.user.balance = meInCloud.balance;
-                        state.user.totalEarned = meInCloud.totalEarned;
-                        state.user.referrals = meInCloud.referrals;
-                        state.user.isBanned = meInCloud.isBanned;
+                        state.user.balance = meInCloud.balance !== undefined ? meInCloud.balance : state.user.balance;
+                        state.user.totalEarned = meInCloud.totalEarned !== undefined ? meInCloud.totalEarned : state.user.totalEarned;
+                        state.user.referrals = meInCloud.referrals || 0;
+                        state.user.isBanned = meInCloud.isBanned || false;
                         state.user.targetCycleRefs = meInCloud.targetCycleRefs || 0;
+                        if (meInCloud.targetStartTime) state.user.targetStartTime = meInCloud.targetStartTime;
                         if (meInCloud.referredBy) state.user.referredBy = meInCloud.referredBy;
 
-                        // লোকাল ক্যাশে সেভ
                         userStorageSet('balance', state.user.balance);
                         userStorageSet('totalEarned', state.user.totalEarned);
                         userStorageSet('referrals', state.user.referrals);
                         userStorageSet('isBanned', state.user.isBanned);
+                        userStorageSet('targetCycleRefs', state.user.targetCycleRefs);
+                        userStorageSet('targetStartTime', state.user.targetStartTime);
                     }
                 }
 
@@ -1296,26 +1277,25 @@
             }
         };
 
-        // নিয়মিত ৪ সেকেন্ড পরপর ক্লাউড থেকে ডাটা সিঙ্ক হবে (Admin <-> Users)
         setInterval(() => {
             CloudDatabase.pull();
         }, 4000);
 
         /* ----------------------------------------------------
-           ⚡ INSTANT & STRICT REFERRAL ENGINE
-           (কোনো শর্ত ছাড়া জয়েন হওয়ার সাথে সাথে রেফারারের অ্যাকাউন্টে টাকা ও সংখ্যা যোগ)
+           ⚡ নিখুঁত রেফারেল সিস্টেম (রেফারার টাকা পাবে, নতুন ইউজার ০ তে শুরু করবে)
         ---------------------------------------------------- */
         async function processInstantReferral() {
             ensureCurrentUserRegistered();
 
             const refTargetId = activeRefParam;
-            // শর্ত ১: রেফারার আইডি বর্তমান ইউজারের নিজের হতে পারবে না
-            // শর্ত ২: এই ইউজার আগে অন্য কারো রেফারে জয়েন করেনি
+
+            // নতুন ইউজারের ক্ষেত্রে সে নিজে ০ ব্যালেন্সে থাকবে
+            // শুধুমাত্র রেফারার বোনাস পাবে
             if (refTargetId && String(refTargetId) !== String(state.user.id) && !state.user.referredBy) {
                 state.user.referredBy = String(refTargetId);
                 userStorageSet('referredBy', state.user.referredBy);
 
-                // ক্লাউড ও লোকাল লিস্টে রেফারারকে খুঁজে টাকা ক্রেডিট করা
+                // রেফারারকে খোঁজা ও ব্যালেন্স বৃদ্ধি করা
                 let referrer = state.users.find(u => String(u.id) === String(refTargetId));
                 if (referrer) {
                     referrer.balance = (referrer.balance || 0) + state.refReward;
@@ -1323,10 +1303,9 @@
                     referrer.referrals = (referrer.referrals || 0) + 1;
                     referrer.targetCycleRefs = (referrer.targetCycleRefs || 0) + 1;
                 } else {
-                    // রেফারার এখনও ডাটাবেজে না থাকলে নতুন রেকর্ড যোগ
                     referrer = {
                         id: String(refTargetId),
-                        name: 'টেলিগ্রাম মেম্বার (' + refTargetId + ')',
+                        name: 'মেম্বার ' + String(refTargetId).slice(-4),
                         username: '',
                         avatar: '',
                         balance: state.refReward,
@@ -1336,23 +1315,31 @@
                         joinedAt: new Date().toISOString(),
                         isBanned: false,
                         isAdmin: (String(refTargetId) === MASTER_ADMIN_ID),
-                        targetCycleRefs: 1
+                        targetCycleRefs: 1,
+                        targetStartTime: Date.now()
                     };
                     state.users.push(referrer);
                 }
 
-                // নিজের একাউন্টে রেফারার মার্ক করা
-                const me = state.users.find(u => String(u.id) === String(state.user.id));
-                if (me) me.referredBy = String(refTargetId);
+                // একই ব্রাউজারে টেস্ট করলে রেফারারের লোকাল ডাটা যাতে সাথে সাথে আপডেট হয়
+                localStorage.setItem(`u_${refTargetId}_balance`, referrer.balance);
+                localStorage.setItem(`u_${refTargetId}_totalEarned`, referrer.totalEarned);
+                localStorage.setItem(`u_${refTargetId}_referrals`, referrer.referrals);
+                localStorage.setItem(`u_${refTargetId}_targetCycleRefs`, referrer.targetCycleRefs);
 
-                // তাৎক্ষণিক ক্লাউড ডাটাবেজে সংরক্ষণ
+                // নতুন ইউজারের ব্যালেন্স নিশ্চিতভাবে ০.০০ থাকবে
+                const me = state.users.find(u => String(u.id) === String(state.user.id));
+                if (me) {
+                    me.referredBy = String(refTargetId);
+                }
+
                 saveState();
 
-                // টেলিগ্রাম বটের মাধ্যমে রেফারারকে সরাসরি নোটিফিকেশন পাঠানো
+                // টেলিগ্রাম বটের মাধ্যমে সরাসরি রেফারারকে মেসেজ
                 if (state.botToken && !String(refTargetId).startsWith('80')) {
                     sendTelegramDirectMessage(
                         refTargetId,
-                        `🎉 <b>অভিনন্দন! আপনার রেফারেল সফল হয়েছে!</b>\n\n👤 নতুন ব্যবহারকারী: <b>${state.user.name}</b>\n💰 বোনাস: <b>+৳${state.refReward.toFixed(2)} টাকা</b>\n\nটাকা সরাসরি আপনার একাউন্টে যুক্ত হয়েছে!`
+                        `🎉 <b>অভিনন্দন! আপনার রেফারে নতুন মেম্বার যুক্ত হয়েছে!</b>\n\n👤 নতুন ব্যবহারকারী: <b>${state.user.name}</b>\n💰 আপনার রেফারেল বোনাস: <b>+৳${state.refReward.toFixed(2)} টাকা</b>\n\nটাকা সরাসরি আপনার একাউন্টে যোগ হয়েছে!`
                     );
                 }
 
@@ -1360,16 +1347,16 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'স্বাগতম!',
-                        text: 'আপনি সফলভাবে রেফারেল লিংকের মাধ্যমে জয়েন করেছেন।',
-                        timer: 2000,
+                        text: 'আপনি সফলভাবে রেফারেল লিংকের মাধ্যমে যোগদান করেছেন। কাজ শুরু করে ইনকাম করুন!',
+                        timer: 2500,
                         showConfirmButton: false
                     });
-                }, 500);
+                }, 400);
             }
         }
 
         /* ----------------------------------------------------
-           👤 নিশ্চিত ইউজার রেজিস্ট্রেশন (ডুপ্লিকেট হবে না)
+           👤 নিশ্চিত ইউজার রেজিস্ট্রেশন
         ---------------------------------------------------- */
         function ensureCurrentUserRegistered() {
             let userObj = state.users.find(u => String(u.id) === String(state.user.id));
@@ -1386,11 +1373,11 @@
                     joinedAt: state.user.joinedAt || new Date().toISOString(),
                     isBanned: state.user.isBanned || false,
                     isAdmin: (String(state.user.id) === MASTER_ADMIN_ID),
-                    targetCycleRefs: state.user.targetCycleRefs || 0
+                    targetCycleRefs: state.user.targetCycleRefs || 0,
+                    targetStartTime: state.user.targetStartTime || Date.now()
                 };
                 state.users.push(userObj);
             } else {
-                // প্রোফাইল তথ্য আপডেট
                 userObj.name = state.user.name;
                 userObj.username = state.user.username;
                 if (state.user.avatar) userObj.avatar = state.user.avatar;
@@ -1400,7 +1387,6 @@
                 }
             }
 
-            // ব্যান স্ট্যাটাস চেক
             const bannedScreen = document.getElementById('banned-screen');
             if (userObj.isBanned && !userObj.isAdmin) {
                 bannedScreen.classList.remove('hidden');
@@ -1606,7 +1592,7 @@
             localStorage.setItem('dailyBonusHours', state.dailyBonusHours);
             localStorage.setItem('targetBonusHours', state.targetBonusHours);
 
-            // ইউজার স্পেসিফিক
+            // ইউজার স্পেসিফিক ক্যাশ
             userStorageSet('balance', state.user.balance);
             userStorageSet('totalEarned', state.user.totalEarned);
             userStorageSet('referrals', state.user.referrals);
@@ -1614,6 +1600,7 @@
             userStorageSet('completedTasks', state.completedTasks);
             userStorageSet('claimedTargets', state.claimedTargets);
             userStorageSet('targetCycleRefs', state.user.targetCycleRefs || 0);
+            userStorageSet('targetStartTime', state.user.targetStartTime);
         }
 
         function saveState() {
@@ -1748,7 +1735,7 @@
             }
 
             listEl.innerHTML = '';
-            myReferees.forEach((u, idx) => {
+            myReferees.forEach((u) => {
                 const item = document.createElement('div');
                 item.className = 'flex items-center justify-between p-2.5 bg-slate-950 border border-slate-800 rounded-xl';
                 item.innerHTML = `
@@ -1761,7 +1748,7 @@
                             <span class="text-[10px] text-slate-400 font-mono">ID: ${u.id}</span>
                         </div>
                     </div>
-                    <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">+ ৳${state.refReward.toFixed(2)} পেইড</span>
+                    <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">+ ৳${state.refReward.toFixed(2)} ক্রেডিট</span>
                 `;
                 listEl.appendChild(item);
             });
@@ -1800,35 +1787,51 @@
             }
         }
 
+        /* ----------------------------------------------------
+           🎯 নিখুঁত টার্গেট বোনাস ও সময় সাইকেল কন্ট্রোল
+        ---------------------------------------------------- */
         function checkTargetCycle() {
-            const cycleMs = (state.targetBonusHours || 24) * 60 * 60 * 1000;
+            const cycleMs = (parseInt(state.targetBonusHours) || 24) * 60 * 60 * 1000;
             const now = Date.now();
-            if (!state.targetStartTime) {
-                state.targetStartTime = now;
+
+            if (!state.user.targetStartTime || isNaN(state.user.targetStartTime)) {
+                state.user.targetStartTime = now;
                 userStorageSet('targetStartTime', now);
             }
 
-            const elapsed = now - state.targetStartTime;
+            const elapsed = now - state.user.targetStartTime;
+            
+            // যদি নির্ধারিত সময় পার হয়ে যায়, নতুন সাইকেল শুরু হবে
             if (elapsed >= cycleMs) {
-                state.targetStartTime = now;
+                state.user.targetStartTime = now;
                 state.user.targetCycleRefs = 0;
                 state.claimedTargets = [];
-                userStorageSet('targetStartTime', state.targetStartTime);
+                userStorageSet('targetStartTime', now);
                 userStorageSet('targetCycleRefs', 0);
                 userStorageSet('claimedTargets', []);
+
+                const userObj = state.users.find(u => String(u.id) === String(state.user.id));
+                if (userObj) {
+                    userObj.targetStartTime = now;
+                    userObj.targetCycleRefs = 0;
+                }
+                saveLocalCacheOnly();
             }
         }
 
         function updateTargetCountdown() {
-            const cycleMs = (state.targetBonusHours || 24) * 60 * 60 * 1000;
+            const cycleMs = (parseInt(state.targetBonusHours) || 24) * 60 * 60 * 1000;
             const now = Date.now();
-            let timeLeft = (state.targetStartTime + cycleMs) - now;
+            let elapsed = now - (state.user.targetStartTime || now);
 
-            if (timeLeft <= 0) {
+            if (elapsed >= cycleMs) {
                 checkTargetCycle();
                 renderTargetBonuses();
-                timeLeft = cycleMs;
+                elapsed = 0;
             }
+
+            let timeLeft = cycleMs - elapsed;
+            if (timeLeft < 0) timeLeft = 0;
 
             const hours = Math.floor(timeLeft / (1000 * 60 * 60));
             const mins = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
@@ -1849,7 +1852,7 @@
             if (!container) return;
             container.innerHTML = '';
 
-            const userCycleRefs = state.user.targetCycleRefs || state.user.referrals || 0;
+            const userCycleRefs = state.user.targetCycleRefs || 0;
 
             state.targetBonuses.forEach(t => {
                 const isClaimed = state.claimedTargets.includes(t.id);
@@ -1882,7 +1885,7 @@
                     </div>
                     <div>
                         <div class="flex justify-between text-[10px] text-slate-400 mb-1">
-                            <span>অগ্রগতি: ${Math.min(userCycleRefs, t.reqRefs)} / ${t.reqRefs} জন</span>
+                            <span>চলমান সাইকেলে: ${Math.min(userCycleRefs, t.reqRefs)} / ${t.reqRefs} জন</span>
                             <span>${progressPercent}%</span>
                         </div>
                         <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -1900,7 +1903,7 @@
             if (!target) return;
             if (state.claimedTargets.includes(targetId)) return;
 
-            const currentRefs = state.user.targetCycleRefs || state.user.referrals || 0;
+            const currentRefs = state.user.targetCycleRefs || 0;
             if (currentRefs < target.reqRefs) return;
 
             state.user.balance += parseFloat(target.reward);
@@ -2198,7 +2201,6 @@
             const totalWithdrawnEl = document.getElementById('profile-total-withdrawn');
             if (!container) return;
 
-            // শুধুমাত্র এই ইউজারের উইথড্র হিস্ট্রি ফিল্টার
             const myWithdrawals = state.withdrawals.filter(w => String(w.userId) === String(state.user.id));
 
             let totalApproved = 0;
@@ -2650,7 +2652,6 @@
             Swal.fire({ icon: 'success', title: 'টাইম ও টার্গেট সেটিংস সেভ হয়েছে!' });
         }
 
-        // বাংলা তারিখ ও সময় ফরম্যাটার
         function formatBengaliDate(isoStr) {
             if (!isoStr) return 'অজানা সময়';
             try {
@@ -2837,7 +2838,6 @@
                         item.status = 'Rejected';
                         item.rejectReason = reason;
 
-                        // ইউজারের ব্যালেন্সে রিফান্ড
                         const targetUser = state.users.find(u => String(u.id) === String(item.userId));
                         if (targetUser) {
                             targetUser.balance = (targetUser.balance || 0) + item.amount;
@@ -2946,7 +2946,7 @@
             Swal.fire({ icon: 'success', title: 'পাসওয়ার্ড আপডেট হয়েছে!' });
         }
 
-        // 🚀 অ্যাপ লোড হওয়ার সাথে সাথে ক্লাউড ইনিশিয়ালাইজেশন
+        // 🚀 অ্যাপ ইনিশিয়ালাইজেশন
         (async function initApp() {
             await CloudDatabase.pull();
             await processInstantReferral();
