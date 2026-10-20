@@ -288,7 +288,7 @@
 
                 <div>
                     <h3 class="font-extrabold text-base text-white tracking-wide">ভিডিও রিওয়ার্ড সিস্টেম</h3>
-                    <p class="text-xs text-slate-400 mt-1">দৈনিক অবশিষ্ট লিমিট: <span class="text-amber-400 font-bold font-mono" id="ads-left">10</span> টি</p>
+                    <p class="text-xs text-slate-400 mt-1">দৈনিক অবশিষ্ট লিমিট: <span class="text-amber-400 font-bold font-mono" id="ads-left">50</span> টি</p>
                 </div>
                 
                 <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800/80 flex justify-between items-center text-xs shadow-inner">
@@ -622,7 +622,7 @@
             firebaseConfig: JSON.parse(localStorage.getItem('firebaseConfig') || '{"apiKey":"","databaseURL":""}'),
             
             adReward: parseFloat(localStorage.getItem('adReward')) || 0.50,
-            adDailyLimit: parseInt(localStorage.getItem('adDailyLimit')) || 10,
+            adDailyLimit: parseInt(localStorage.getItem('adDailyLimit')) || 50,
             refReward: parseFloat(localStorage.getItem('refReward')) || 5.00,
             minWithdraw: parseFloat(localStorage.getItem('minWithdraw')) || 50.00,
             requireAllTasksForWithdraw: (localStorage.getItem('requireAllTasksForWithdraw') !== null) ? (localStorage.getItem('requireAllTasksForWithdraw') === 'true') : true,
@@ -672,7 +672,7 @@
                 targetStartTime: parseInt(userStorageGet('targetStartTime', Date.now()))
             },
 
-            adsLeft: parseInt(userStorageGet('adsLeft', 10)),
+            adsLeft: parseInt(userStorageGet('adsLeft', 50)),
             lastDailyClaimTime: parseInt(userStorageGet('lastDailyClaimTime', 0)),
             completedTasks: userStorageGet('completedTasks', []),
             clickedTasks: userStorageGet('clickedTasks', []),
