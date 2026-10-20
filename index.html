@@ -15,7 +15,7 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- ☁️ FIREBASE SDK FOR LIFETIME SAFE DATABASE -->
+    <!-- ☁️ FIREBASE SDK (ঐচ্ছিক ব্যাকআপ হিসেবে সংরক্ষিত) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -39,7 +39,7 @@
     </script>
 
     <style>
-        :root {
+        :root{
             --color-primary: #6366f1;
             --color-primary-dark: #4f46e5;
             --color-primary-light: rgba(99, 102, 241, 0.15);
@@ -302,7 +302,7 @@
                     <span class="font-bold text-emerald-400 text-sm font-mono">+ ৳ <span id="ad-reward-display">0.50</span></span>
                 </div>
 
-                <div id="ad-timer-box" class="hidden bg-slate-950 border border-amber-500/40 p-4 rounded-2xl shadow-lg animate-fade-in">
+                <div id="ad-timer-box" class="hidden bg-slate-950 border border-amber-500/40 p-4 rounded-2xl shadow-lg">
                     <p class="text-xs text-amber-400 font-semibold mb-1 flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-spinner fa-spin"></i> বিজ্ঞাপন প্লে হচ্ছে, অপেক্ষা করুন...
                     </p>
@@ -399,7 +399,7 @@
             </div>
         </section>
 
-        <!-- 5. 💸 WITHDRAW SYSTEM TAB (Clean UI, Conditions Triggered ONLY on Submit Click) -->
+        <!-- 5. 💸 WITHDRAW SYSTEM TAB -->
         <section id="view-withdraw" class="hidden space-y-4">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
                 <h3 class="text-sm font-bold text-white mb-3">টাকা উত্তোলন (Personal Account)</h3>
@@ -614,7 +614,7 @@
                     </div>
 
                     <p class="text-[11px] text-slate-400 leading-relaxed">
-                        এখানে চ্যানেল যোগ করলে ইউজাররা সেই চ্যানেলে জয়েন না করে মিনি অ্যাপের ভেতরে প্রবেশ করতে পারবে না। ইউজার জয়েন থাকলে স্বয়ংক্রিয়ভাবে সরাসরি অ্যাপ ওপেন হবে।
+                        এখানে চ্যানেল যোগ করলে ইউজাররা সেই চ্যানেলে জয়েন না করে মিনি অ্যাপের ভেতরে প্রবেশ করতে পারবে না।
                     </p>
 
                     <div>
@@ -628,7 +628,7 @@
                     </div>
 
                     <div>
-                        <label class="text-[11px] text-amber-400 block mb-1">চ্যানেল ইউজারনেম (বট চেক করার জন্য, যেমন: @mychannel)</label>
+                        <label class="text-[11px] text-amber-400 block mb-1">চ্যানেল ইউজারনেম (যেমন: @mychannel)</label>
                         <input type="text" id="new-gate-chatid" placeholder="@mychannel" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
                     </div>
 
@@ -741,23 +741,27 @@
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
                     <div class="flex items-center justify-between">
                         <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-cloud"></i> ক্লাউড ডাটাবেজ (Google Firebase)
+                            <i class="fa-solid fa-cloud"></i> ক্লাউড ডাটাবেজ
                         </h4>
-                        <span id="firebase-status-badge" class="text-[10px] px-2 py-0.5 rounded font-bold bg-slate-800 text-slate-400 border border-slate-700">কানেক্টেড নয়</span>
+                        <span id="firebase-status-badge" class="text-[10px] px-2 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">ফ্রি সিঙ্ক ইঞ্জিন সক্রিয় ✓</span>
                     </div>
 
+                    <p class="text-[11px] text-slate-400 leading-relaxed">
+                        রেফারেল কাউন্ট ও লাইভ ব্যালেন্স এখন ফায়ারবেস ছাড়াই স্বয়ংক্রিয়ভাবে ক্লাউড সার্ভারে সিঙ্ক হয়। চাইলে আপনি অতিরিক্ত হিসেবে নিচে ফায়ারবেসও যুক্ত করতে পারেন।
+                    </p>
+
                     <div>
-                        <label class="text-[11px] text-slate-400 block mb-1">Firebase Database URL</label>
+                        <label class="text-[11px] text-slate-400 block mb-1">Firebase Database URL (ঐচ্ছিক)</label>
                         <input type="text" id="admin-firebase-dburl" placeholder="https://your-app-default-rtdb.firebaseio.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
                     </div>
 
                     <div>
-                        <label class="text-[11px] text-slate-400 block mb-1">Firebase API Key</label>
+                        <label class="text-[11px] text-slate-400 block mb-1">Firebase API Key (ঐচ্ছিক)</label>
                         <input type="text" id="admin-firebase-apikey" placeholder="AIzaSyA..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
                     </div>
 
                     <button onclick="adminSaveFirebaseConfig()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition">
-                        ডাটাবেজ কানেক্ট করুন
+                        ডাটাবেজ সেভ করুন
                     </button>
                 </div>
 
@@ -824,7 +828,7 @@
                     </h4>
 
                     <div>
-                        <label class="text-[11px] text-slate-400 block mb-1">বট ইউজারনেম (Bot Username ছাড়া @)</label>
+                        <label class="text-[11px] text-slate-400 block mb-1">বট ইউজারনেম (@ ছাড়া)</label>
                         <input type="text" id="admin-bot-username-input" placeholder="AdsEarn_Pro_Bot" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
                     </div>
 
@@ -840,7 +844,7 @@
 
                     <div>
                         <label class="text-[11px] text-amber-400 font-bold block mb-1">
-                            টেলিগ্রাম বট টোকেন (চ্যানেল অটো-চেক ও মেসেজের জন্য)
+                            টেলিগ্রাম বট টোকেন (অটো নোটিফিকেশন ও চ্যানেল চেকের জন্য)
                         </label>
                         <input type="text" id="admin-bot-token-input" placeholder="যেমন: 749281729:AAHkLp-..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
                     </div>
@@ -980,6 +984,52 @@
             tg.expand();
         }
 
+        // Generate unique fallback ID for browser testing
+        function getOrGenBrowserUserId() {
+            let bId = localStorage.getItem('__browser_uid__');
+            if (!bId) {
+                bId = 'u_' + Math.floor(100000 + Math.random() * 900000);
+                localStorage.setItem('__browser_uid__', bId);
+            }
+            return bId;
+        }
+
+        const currentUserId = tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : getOrGenBrowserUserId();
+        const currentUserName = tg?.initDataUnsafe?.user?.first_name || (currentUserId.startsWith('u_') ? 'টেস্ট ইউজার ' + currentUserId.slice(-4) : 'মুহাম্মদ ইমন');
+        const currentUserAvatar = tg?.initDataUnsafe?.user?.photo_url || '';
+
+        // 🎯 100% RELIABLE REFERRAL PARAMETER DETECTOR
+        function extractReferralParam() {
+            let ref = null;
+            // 1. Check official Telegram WebApp start_param
+            if (tg?.initDataUnsafe?.start_param) {
+                ref = String(tg.initDataUnsafe.start_param);
+            }
+            // 2. Check URL Search Parameters
+            if (!ref) {
+                const sp = new URLSearchParams(window.location.search);
+                ref = sp.get('startapp') || sp.get('tgWebAppStartParam') || sp.get('ref') || sp.get('start');
+            }
+            // 3. Check Telegram Hash Parameters
+            if (!ref && window.location.hash) {
+                const hp = new URLSearchParams(window.location.hash.replace('#', ''));
+                ref = hp.get('tgWebAppStartParam') || hp.get('startapp') || hp.get('ref');
+            }
+            // 4. Regex fallback across entire URL
+            if (!ref) {
+                const match = window.location.href.match(/(?:startapp|tgWebAppStartParam|start|ref)=ref_?([a-zA-Z0-9_-]+)/i);
+                if (match && match[1]) ref = match[1];
+            }
+
+            if (ref) {
+                if (ref.startsWith('ref_')) ref = ref.replace('ref_', '');
+                ref = ref.trim();
+            }
+            return ref || null;
+        }
+
+        const activeRefParam = extractReferralParam();
+
         const defaultTasks = [
             { id: 101, title: 'অফিশিয়াল টেলিগ্রাম চ্যানেলে যুক্ত হোন', reward: 2.00, icon: 'fa-brands fa-telegram text-blue-400', link: 'https://t.me/telegram', chatId: '@telegram' },
             { id: 102, title: 'পেমেন্ট প্রুফ গ্রুপে জয়েন করুন', reward: 1.50, icon: 'fa-brands fa-telegram text-sky-400', link: 'https://t.me/telegram', chatId: '@telegram' }
@@ -993,25 +1043,7 @@
             { id: 5, reqRefs: 1000, reward: 500.00 }
         ];
 
-        const currentUserId = tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : MASTER_ADMIN_ID;
-        const currentUserName = tg?.initDataUnsafe?.user?.first_name || 'মুহাম্মদ ইমন';
-        const currentUserAvatar = tg?.initDataUnsafe?.user?.photo_url || '';
-
-        // Extract referral from Telegram start_param or URL search params
-        let refParam = null;
-        if (tg?.initDataUnsafe?.start_param) {
-            let sp = tg.initDataUnsafe.start_param;
-            if (sp.startsWith('ref_')) refParam = sp.replace('ref_', '');
-            else refParam = sp;
-        } else {
-            const urlParams = new URLSearchParams(window.location.search);
-            const rawRef = urlParams.get('startapp') || urlParams.get('tgWebAppStartParam') || urlParams.get('ref');
-            if (rawRef) {
-                refParam = rawRef.startsWith('ref_') ? rawRef.replace('ref_', '') : rawRef;
-            }
-        }
-
-        // App Central State
+        // Central State
         let state = {
             botUsername: localStorage.getItem('botUsername') || 'AdsEarn_Pro_Bot',
             botAppName: localStorage.getItem('botAppName') || 'app',
@@ -1020,7 +1052,6 @@
             todayIncome: parseFloat(localStorage.getItem('todayIncome')) || 0.00,
             referrals: parseInt(localStorage.getItem('referrals')) || 0,
             
-            // Daily bonus & time control
             dailyBonusAmount: parseFloat(localStorage.getItem('dailyBonusAmount')) || 1.00,
             dailyBonusHours: parseInt(localStorage.getItem('dailyBonusHours')) || 24,
             lastDailyClaimTime: parseInt(localStorage.getItem('lastDailyClaimTime')) || 0,
@@ -1032,12 +1063,10 @@
             adsWatchedTotal: parseInt(localStorage.getItem('adsWatchedTotal')) || 0,
             adminPass: localStorage.getItem('adminPass') || '1234',
 
-            referredBy: localStorage.getItem('referredBy') || refParam || null,
+            referredBy: localStorage.getItem('referredBy') || activeRefParam || null,
             refBonusGranted: localStorage.getItem('refBonusGranted') === 'true',
 
-            // Mandatory Gate Channels
             mandatoryChannels: JSON.parse(localStorage.getItem('mandatoryChannels')) || [],
-
             targetBonuses: JSON.parse(localStorage.getItem('targetBonuses')) || defaultTargets,
             claimedTargets: JSON.parse(localStorage.getItem('claimedTargets')) || [],
             targetStartTime: parseInt(localStorage.getItem('targetStartTime')) || Date.now(),
@@ -1050,7 +1079,6 @@
             adsLeft: (localStorage.getItem('adsLeft') !== null) ? parseInt(localStorage.getItem('adsLeft')) : 10,
             refReward: parseFloat(localStorage.getItem('refReward')) || 5.00,
 
-            // 🔒 WITHDRAW LOCK RULES (Controllable via Admin Panel)
             requireAllTasksForWithdraw: (localStorage.getItem('requireAllTasksForWithdraw') !== null) ? (localStorage.getItem('requireAllTasksForWithdraw') === 'true') : true,
             minReferralsForWithdraw: (localStorage.getItem('minReferralsForWithdraw') !== null) ? parseInt(localStorage.getItem('minReferralsForWithdraw')) : 5,
 
@@ -1082,37 +1110,181 @@
             user: { id: currentUserId, name: currentUserName, avatar: currentUserAvatar }
         };
 
-        // Temporary tracking for 10-second task claim cooldowns
         let taskCooldownTimers = {};
 
         /* ----------------------------------------------------
-           ⚡ INSTANT REFERRAL REWARD ENGINE
+           🌐 ZERO-CONFIG UNIVERSAL CLOUD SYNC ENGINE
+           (ফায়ারবেস ছাড়াই সব ফোনে রেফারել সিঙ্ক হওয়ার ব্যবস্থা)
         ---------------------------------------------------- */
-        function processInstantReferral() {
-            if (state.referredBy && !state.refBonusGranted && String(state.referredBy) !== String(state.user.id)) {
-                let referrer = state.users.find(u => String(u.id) === String(state.referredBy));
-                if (referrer) {
-                    referrer.balance = (referrer.balance || 0) + state.refReward;
-                    referrer.totalEarned = (referrer.totalEarned || 0) + state.refReward;
-                    referrer.referrals = (referrer.referrals || 0) + 1;
-                    referrer.targetCycleRefs = (referrer.targetCycleRefs || 0) + 1;
-                }
+        const CLOUD_KV_PREFIX = 'https://kvdb.io/4yKq7nZqX9v8wE1L2mP0oQ/';
 
-                let meInList = state.users.find(u => String(u.id) === String(state.user.id));
-                if (meInList) {
-                    meInList.referredBy = state.referredBy;
-                }
-
-                state.refBonusGranted = true;
-                localStorage.setItem('refBonusGranted', 'true');
-                localStorage.setItem('referredBy', state.referredBy);
-                localStorage.setItem('appRealUsers', JSON.stringify(state.users));
-                syncToCloudDatabase();
+        async function cloudKvGet(key) {
+            try {
+                const res = await fetch(`${CLOUD_KV_PREFIX}${key}?_t=${Date.now()}`);
+                if (!res.ok) return null;
+                return await res.json();
+            } catch(e) {
+                return null;
             }
         }
 
+        async function cloudKvSet(key, value) {
+            try {
+                await fetch(`${CLOUD_KV_PREFIX}${key}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(value)
+                });
+            } catch(e) {}
+        }
+
         /* ----------------------------------------------------
-           ☁️ FIREBASE DATABASE SYNC
+           ⚡ INSTANT REFERRAL ENGINE (অ্যাপ খোলার সাথে সাথে কাউন্ট)
+        ---------------------------------------------------- */
+        async function processInstantReferral() {
+            const referrerTargetId = activeRefParam || state.referredBy;
+
+            // যদি রেফারেল লিংক থেকে আসা হয় এবং আগে বোনাস না নেওয়া হয়ে থাকে
+            if (referrerTargetId && !state.refBonusGranted && String(referrerTargetId) !== String(state.user.id)) {
+                state.referredBy = referrerTargetId;
+                state.refBonusGranted = true;
+                localStorage.setItem('referredBy', state.referredBy);
+                localStorage.setItem('refBonusGranted', 'true');
+
+                // ১. লোকাল ইউজারে রেফারারের নাম যুক্ত করা
+                let localReferrer = state.users.find(u => String(u.id) === String(referrerTargetId));
+                if (localReferrer) {
+                    localReferrer.balance = (localReferrer.balance || 0) + state.refReward;
+                    localReferrer.totalEarned = (localReferrer.totalEarned || 0) + state.refReward;
+                    localReferrer.referrals = (localReferrer.referrals || 0) + 1;
+                    localReferrer.targetCycleRefs = (localReferrer.targetCycleRefs || 0) + 1;
+                }
+
+                // ২. ক্লাউডে রেফারারের ডাটা আপডেট পাঠানো (যাতে অন্য ফোনে সাথে সাথে টাকা যোগ হয়)
+                try {
+                    let cloudReferrer = await cloudKvGet(`user_${referrerTargetId}`);
+                    if (!cloudReferrer) {
+                        cloudReferrer = {
+                            id: referrerTargetId,
+                            balance: 0,
+                            totalEarned: 0,
+                            referrals: 0,
+                            referredMembers: []
+                        };
+                    }
+
+                    cloudReferrer.balance = (cloudReferrer.balance || 0) + state.refReward;
+                    cloudReferrer.totalEarned = (cloudReferrer.totalEarned || 0) + state.refReward;
+                    cloudReferrer.referrals = (cloudReferrer.referrals || 0) + 1;
+                    if (!Array.isArray(cloudReferrer.referredMembers)) cloudReferrer.referredMembers = [];
+
+                    // নতুন মেম্বারকে রেফারারের লিস্টে যুক্ত করা
+                    if (!cloudReferrer.referredMembers.some(m => String(m.id) === String(state.user.id))) {
+                        cloudReferrer.referredMembers.unshift({
+                            id: state.user.id,
+                            name: state.user.name,
+                            avatar: state.user.avatar,
+                            time: Date.now()
+                        });
+                    }
+
+                    await cloudKvSet(`user_${referrerTargetId}`, cloudReferrer);
+
+                    // রেফারেল লগ সেভ করা
+                    await cloudKvSet(`ref_${referrerTargetId}_${state.user.id}`, {
+                        referrerId: referrerTargetId,
+                        refereeId: state.user.id,
+                        reward: state.refReward,
+                        time: Date.now()
+                    });
+                } catch(err) {
+                    console.log('Cloud sync info:', err);
+                }
+
+                // ৩. যদি বট টোকেন থাকে, রেফারারকে ইনস্ট্যান্ট টেলিগ্রাম মেসেজ দেওয়া
+                if (state.botToken && !referrerTargetId.startsWith('u_')) {
+                    sendTelegramDirectMessage(
+                        referrerTargetId,
+                        `🎉 <b>অভিনন্দন! নতুন রেফারেল বোনাস পেয়েছেন!</b>\n\n👤 ব্যবহারকারী: <b>${state.user.name}</b>\n💰 বোনাস: <b>+৳${state.refReward.toFixed(2)} টাকা</b>\n\nআপনার অ্যাপের মূল ব্যালেন্সে টাকা যুক্ত হয়েছে!`
+                    );
+                }
+
+                localStorage.setItem('appRealUsers', JSON.stringify(state.users));
+
+                // নতুন ইউজারকে স্বাগতম জানানো
+                setTimeout(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'স্বাগতম!',
+                        text: 'আপনি রেফারেল লিংকের মাধ্যমে সফলভাবে যুক্ত হয়েছেন।',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }, 800);
+            }
+
+            // নিজের প্রোফাইল ক্লাউডের সাথে সিঙ্ক রাখা
+            syncMyAccountWithCloud();
+        }
+
+        // নিজের প্রোফাইল ক্লাউড থেকে সিঙ্ক করা
+        async function syncMyAccountWithCloud() {
+            try {
+                let myCloudData = await cloudKvGet(`user_${state.user.id}`);
+                if (myCloudData) {
+                    let changed = false;
+                    // যদি ক্লাউডে ব্যালেন্স বা রেফার বেশি থাকে তা লোকাল অ্যাপে যোগ হবে
+                    if (myCloudData.balance > state.balance) {
+                        state.balance = myCloudData.balance;
+                        changed = true;
+                    }
+                    if (myCloudData.totalEarned > state.totalEarned) {
+                        state.totalEarned = myCloudData.totalEarned;
+                        changed = true;
+                    }
+                    if (myCloudData.referrals > state.referrals) {
+                        state.referrals = myCloudData.referrals;
+                        changed = true;
+                    }
+
+                    // রেফার করা মেম্বারদের লোকাল ইউজার লিস্টে ঢুকিয়ে দেওয়া
+                    if (Array.isArray(myCloudData.referredMembers)) {
+                        myCloudData.referredMembers.forEach(mem => {
+                            if (!state.users.some(u => String(u.id) === String(mem.id))) {
+                                state.users.push({
+                                    id: mem.id,
+                                    name: mem.name,
+                                    avatar: mem.avatar || '',
+                                    referredBy: state.user.id,
+                                    balance: 0,
+                                    totalEarned: 0
+                                });
+                                changed = true;
+                            }
+                        });
+                    }
+
+                    if (changed) {
+                        saveState();
+                        updateUI();
+                    }
+                } else {
+                    // ক্লাউডে ডাটা না থাকলে প্রথমবার সেভ করা
+                    cloudKvSet(`user_${state.user.id}`, {
+                        id: state.user.id,
+                        name: state.user.name,
+                        balance: state.balance,
+                        totalEarned: state.totalEarned,
+                        referrals: state.referrals,
+                        referredMembers: []
+                    });
+                }
+            } catch(e) {}
+        }
+        setInterval(syncMyAccountWithCloud, 12000); // প্রতি ১২ সেকেন্ডে অটোমেটিক চেক হবে
+
+        /* ----------------------------------------------------
+           ☁️ FIREBASE SYNC (ঐচ্ছিক ব্যাকআপ)
         ---------------------------------------------------- */
         let firebaseDb = null;
         function initFirebaseConnection() {
@@ -1124,22 +1296,11 @@
                     firebaseDb = firebase.database();
                     const badge = document.getElementById('firebase-status-badge');
                     if (badge) {
-                        badge.innerText = 'লাইভ ক্লাউড সিঙ্ক চালু ✓';
+                        badge.innerText = 'ফায়ারবেস লাইভ সিঙ্ক চালু ✓';
                         badge.className = 'text-[10px] px-2 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
                     }
-
-                    firebaseDb.ref('earn_pro_app_state/users').on('value', (snapshot) => {
-                        const cloudUsers = snapshot.val();
-                        if (cloudUsers && Array.isArray(cloudUsers)) {
-                            state.users = cloudUsers;
-                            localStorage.setItem('appRealUsers', JSON.stringify(state.users));
-                            syncCurrentUser();
-                            renderReferredMembersList();
-                            renderAdminUsers();
-                        }
-                    });
                 } catch (e) {
-                    console.warn("Firebase Warning:", e);
+                    console.warn("Firebase Notice:", e);
                 }
             }
         }
@@ -1155,14 +1316,9 @@
                         mandatoryChannels: state.mandatoryChannels,
                         banner: state.banner,
                         notice: state.notice,
-                        targetBonuses: state.targetBonuses,
-                        requireAllTasksForWithdraw: state.requireAllTasksForWithdraw,
-                        minReferralsForWithdraw: state.minReferralsForWithdraw,
                         lastUpdated: Date.now()
                     });
-                } catch (err) {
-                    console.error("Cloud push failed:", err);
-                }
+                } catch (err) {}
             }
         }
 
@@ -1193,7 +1349,6 @@
                 }
             }
 
-            // Real-time Ban Check
             const bannedScreen = document.getElementById('banned-screen');
             if (userObj.isBanned && !userObj.isAdmin) {
                 bannedScreen.classList.remove('hidden');
@@ -1205,7 +1360,7 @@
         }
 
         /* ----------------------------------------------------
-           🔒 SMART MANDATORY CHANNELS AUTO CHECK
+           🔒 MANDATORY CHANNELS AUTO CHECK
         ---------------------------------------------------- */
         async function checkMandatoryGate() {
             const gateModal = document.getElementById('mandatory-channel-gate');
@@ -1366,6 +1521,18 @@
             return formatted;
         }
 
+        // 🔗 ডিরেক্ট মিনি অ্যাপ লিংক তৈরির ফাংশন
+        function getDirectMiniAppReferralLink() {
+            const bName = (state.botUsername || 'AdsEarn_Pro_Bot').replace('@', '');
+            const aName = state.botAppName ? state.botAppName.replace('/', '').trim() : '';
+
+            if (aName) {
+                return `https://t.me/${bName}/${aName}?startapp=ref_${state.user.id}`;
+            } else {
+                return `https://t.me/${bName}?startapp=ref_${state.user.id}`;
+            }
+        }
+
         function updateUI() {
             syncCurrentUser();
             checkTargetCycle();
@@ -1409,10 +1576,8 @@
             document.getElementById('home-banner-sub').innerText = state.banner.sub;
             document.getElementById('app-notice-text').innerText = state.notice;
 
-            // Direct Mini App Referral Link Structure
-            const bName = state.botUsername || 'AdsEarn_Pro_Bot';
-            const aName = state.botAppName ? `/${state.botAppName}` : '';
-            document.getElementById('ref-link').value = `https://t.me/${bName}${aName}?startapp=ref_${state.user.id}`;
+            // পারফেক্ট মিনি অ্যাপ লিংক ইনপুটে বসানো
+            document.getElementById('ref-link').value = getDirectMiniAppReferralLink();
 
             updateDailyBonusStatus();
             updatePaymentMethodUI();
@@ -1578,7 +1743,6 @@
             localStorage.setItem('adDailyLimit', state.adDailyLimit);
             localStorage.setItem('refReward', state.refReward);
 
-            // Save withdrawal requirements
             localStorage.setItem('requireAllTasksForWithdraw', state.requireAllTasksForWithdraw);
             localStorage.setItem('minReferralsForWithdraw', state.minReferralsForWithdraw);
 
@@ -1820,24 +1984,20 @@
                 }
             }
 
-            // If user did NOT join the channel
             if (!verified) {
-                // Remove from clicked so they have to join again
                 state.clickedTasks = state.clickedTasks.filter(id => id !== taskId);
                 saveState();
 
-                // Trigger 10-second cooldown
                 taskCooldownTimers[taskId] = Date.now() + 10000;
                 renderUserTasks();
 
                 Swal.fire({
                     icon: 'error',
                     title: 'টাস্ক সম্পন্ন হয়নি!',
-                    html: `বট যাচাই করে দেখেছে <b>আপনি এখনো চ্যানেলে জয়েন করেননি!</b><br><br>সঠিকভাবে জয়েন করতে হবে। অনুগ্রহ করে <b class="text-rose-400">১০ সেকেন্ড পর</b> আবার জয়েন বাটনে চাপ দিন।`,
+                    html: `বট যাচাই করে দেখেছে <b>আপনি এখনো চ্যানেলে জয়েন করেননি!</b><br><br>অনুগ্রহ করে <b class="text-rose-400">১০ সেকেন্ড পর</b> আবার জয়েন বাটনে চাপ দিন।`,
                     confirmButtonColor: '#e11d48'
                 });
 
-                // Countdown on button in background
                 const interval = setInterval(() => {
                     if (!taskCooldownTimers[taskId] || taskCooldownTimers[taskId] <= Date.now()) {
                         clearInterval(interval);
@@ -1851,7 +2011,6 @@
                 return;
             }
 
-            // Successfully Verified!
             if (!state.completedTasks.includes(taskId)) {
                 state.completedTasks.push(taskId);
             }
@@ -1964,7 +2123,7 @@
 
         function shareOnTelegram() {
             const link = document.getElementById("ref-link").value;
-            const text = encodeURIComponent(`প্রতিদিন বিজ্ঞাপন দেখে ও কাজ করে বিকাশ/নগদে নিশ্চিত টাকা ইনকাম করুন!\nজয়েন করুন এখনই:`);
+            const text = encodeURIComponent(`প্রতিদিন বিজ্ঞাপন দেখে ও সহজ কাজ করে বিকাশ/নগদে নিশ্চিত টাকা ইনকাম করুন!\nজয়েন করুন এখনই:`);
             window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`);
         }
 
@@ -2071,23 +2230,20 @@
         }
 
         /* ----------------------------------------------------
-           💸 ADVANCED CONDITIONAL WITHDRAW SYSTEM
+           💸 CONDITIONAL WITHDRAW SYSTEM
         ---------------------------------------------------- */
         function submitWithdraw() {
-            // STEP 1: Check Payment Method
             const checkedRadio = document.querySelector('input[name="pay-method"]:checked');
             if (!checkedRadio) {
                 Swal.fire({ icon: 'error', title: 'পেমেন্ট মেথড নির্বাচন করুন', text: 'বিকাশ অথবা নগদ নির্বাচন করুন।' });
                 return;
             }
 
-            // STEP 2: CHECK MINIMUM BALANCE FIRST!
-            // যদি ব্যালেন্স না থাকে, তাহলে কোনো শর্ত বলা হবে না - শুধু পর্যাপ্ত ব্যালেন্স নেই এটাই সুন্দরভাবে বলবে
             if (state.balance < state.minWithdraw) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'পর্যাপ্ত ব্যালেন্স নেই!',
-                    html: `উইথড্র করার মতো পর্যাপ্ত ব্যালেন্স আপনার অ্যাকাউন্টে নেই।<br><br>আপনার বর্তমান ব্যালেন্স: <b class="text-rose-400">৳ ${state.balance.toFixed(2)}</b><br>সর্বনিম্ন উত্তোলন লিমিট: <b class="text-emerald-400">৳ ${state.minWithdraw.toFixed(2)}</b><br><br><span class="text-xs text-slate-400">বিজ্ঞাপন দেখে অথবা বন্ধুদের রেফার করে ব্যালেন্স বাড়ান।</span>`,
+                    html: `উইথড্র করার মতো পর্যাপ্ত ব্যালেন্স আপনার অ্যাকাউন্টে নেই।<br><br>আপনার বর্তমান ব্যালেন্স: <b class="text-rose-400">৳ ${state.balance.toFixed(2)}</b><br>সর্বনিম্ন উত্তোলন লিমিট: <b class="text-emerald-400">৳ ${state.minWithdraw.toFixed(2)}</b>`,
                     confirmButtonText: 'কাজ শুরু করুন',
                     showCancelButton: true,
                     cancelButtonText: 'ঠিক আছে',
@@ -2100,15 +2256,13 @@
                 return;
             }
 
-            // STEP 3: USER HAS ENOUGH BALANCE! NOW CHECK TASK AND REFERRAL CONDITIONS
-            // 3A. Check Tasks Condition
             if (state.requireAllTasksForWithdraw) {
                 const uncompletedTasks = state.tasks.filter(t => !state.completedTasks.includes(t.id));
                 if (uncompletedTasks.length > 0) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'সকল টাস্ক সম্পন্ন করুন!',
-                        html: `আপনার অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স রয়েছে, তবে টাকা উত্তোলন করার আগে <b>সকল লাইভ টাস্ক সম্পন্ন করা আবশ্যক</b>।<br><br>আপনার এখনো <b class="text-rose-400">${uncompletedTasks.length}টি টাস্ক বাকি</b> আছে!`,
+                        html: `টাকা উত্তোলন করার আগে <b>সকল লাইভ টাস্ক সম্পন্ন করা আবশ্যক</b>।<br><br>আপনার এখনো <b class="text-rose-400">${uncompletedTasks.length}টি টাস্ক বাকি</b> আছে!`,
                         confirmButtonText: 'টাস্ক সম্পন্ন করুন',
                         showCancelButton: true,
                         cancelButtonText: 'পরে করব',
@@ -2122,7 +2276,6 @@
                 }
             }
 
-            // 3B. Check Referral Target Condition
             const requiredRefs = parseInt(state.minReferralsForWithdraw) || 0;
             const userRefs = state.referrals || 0;
             if (requiredRefs > 0 && userRefs < requiredRefs) {
@@ -2130,7 +2283,7 @@
                 Swal.fire({
                     icon: 'warning',
                     title: 'রেফার লিমিট অপূর্ণ!',
-                    html: `উইথড্র করার মতো ব্যালেন্স হয়েছে, তবে টাকা তুলতে সর্বনিম্ন <b>${requiredRefs}টি সফল রেফার</b> থাকা বাধ্যতামূলক।<br><br>আপনার বর্তমান রেফার: <b>${userRefs} জন</b><br>আরও প্রয়োজন: <b class="text-rose-400">${needed} জন</b>`,
+                    html: `টাকা তুলতে সর্বনিম্ন <b>${requiredRefs}টি সফল রেফার</b> থাকা বাধ্যতামূলক।<br><br>আপনার বর্তমান রেফার: <b>${userRefs} জন</b><br>আরও প্রয়োজন: <b class="text-rose-400">${needed} জন</b>`,
                     confirmButtonText: 'রেফার করুন',
                     showCancelButton: true,
                     cancelButtonText: 'বুঝেছি',
@@ -2143,7 +2296,6 @@
                 return;
             }
 
-            // STEP 4: Input Validation (Mobile Number and Entered Amount)
             const method = checkedRadio.value;
             const number = document.getElementById('withdraw-number').value.trim();
             const amount = parseFloat(document.getElementById('withdraw-amount').value);
@@ -2159,11 +2311,10 @@
             }
 
             if (amount > state.balance) {
-                Swal.fire({ icon: 'error', title: 'অতিরিক্ত ব্যালেন্স দিয়েছেন', html: `আপনার ওয়ালেটে পর্যাপ্ত টাকা নেই। আপনার সর্বোচ্চ ব্যালেন্স <b>৳ ${state.balance.toFixed(2)}</b> টাকা।` });
+                Swal.fire({ icon: 'error', title: 'অতিরিক্ত ব্যালেন্স দিয়েছেন', html: `আপনার সর্বোচ্চ ব্যালেন্স <b>৳ ${state.balance.toFixed(2)}</b> টাকা।` });
                 return;
             }
 
-            // All checks passed! Proceed with withdrawal
             state.balance -= amount;
 
             const newWithdraw = {
@@ -2224,7 +2375,7 @@
         }
 
         async function sendTelegramDirectMessage(chatId, text, replyMarkup = null) {
-            if (!state.botToken) return { ok: false, description: "বট টোকেন দেওয়া নেই!" };
+            if (!state.botToken) return { ok: false };
 
             const payload = { chat_id: chatId, text: text, parse_mode: 'HTML' };
             if (replyMarkup) payload.reply_markup = replyMarkup;
@@ -2237,7 +2388,7 @@
                 });
                 return await response.json();
             } catch (err) {
-                return { ok: false, description: err.message };
+                return { ok: false };
             }
         }
 
@@ -2320,10 +2471,9 @@
             };
             saveState();
             initFirebaseConnection();
-            Swal.fire({ icon: 'success', title: 'ক্লাউড ডাটাবেজ সংযুক্ত!' });
+            Swal.fire({ icon: 'success', title: 'ডাটাবেজ সেটিংস সেভ হয়েছে!' });
         }
 
-        /* 🔒 MANDATORY GATE CONTROLS */
         function adminAddMandatoryGateChannel() {
             const title = document.getElementById('new-gate-title').value.trim();
             const link = document.getElementById('new-gate-link').value.trim();
@@ -2356,7 +2506,7 @@
             const container = document.getElementById('admin-gate-channels-list');
             if (!container) return;
             if (state.mandatoryChannels.length === 0) {
-                container.innerHTML = '<p class="text-xs text-slate-500 text-center py-2">কোনো বাধ্যতামূলক চ্যানেল যুক্ত নেই (অ্যাপ সবার জন্য আনলক)</p>';
+                container.innerHTML = '<p class="text-xs text-slate-500 text-center py-2">কোনো বাধ্যতামূলক চ্যানেল যুক্ত নেই</p>';
                 return;
             }
 
@@ -2408,7 +2558,6 @@
                 document.getElementById('admin-firebase-apikey').value = state.firebaseConfig.apiKey || '';
             }
 
-            // Payment Methods & Withdraw Condition Settings
             document.getElementById('admin-bkash-status').checked = state.paymentMethods.bkash.enabled;
             document.getElementById('admin-bkash-logo').value = state.paymentMethods.bkash.logo;
             document.getElementById('admin-nagad-status').checked = state.paymentMethods.nagad.enabled;
@@ -2465,7 +2614,6 @@
             Swal.fire({ icon: 'success', title: 'টাইম ও টার্গেট সেটিংস সেভ হয়েছে!' });
         }
 
-        /* 👥 USER MANAGEMENT & BAN/UNBAN */
         function renderAdminUsers() {
             const list = document.getElementById('admin-users-list');
             const searchInput = document.getElementById('admin-user-search')?.value.toLowerCase().trim() || '';
@@ -2570,7 +2718,6 @@
             state.paymentMethods.nagad.logo = document.getElementById('admin-nagad-logo').value.trim();
             state.minWithdraw = parseFloat(document.getElementById('admin-min-withdraw').value) || 50.00;
             
-            // Save New Withdraw Restrictions
             state.requireAllTasksForWithdraw = document.getElementById('admin-require-tasks').checked;
             state.minReferralsForWithdraw = parseInt(document.getElementById('admin-min-ref-withdraw').value) || 0;
 
@@ -2736,7 +2883,7 @@
             Swal.fire({ icon: 'success', title: 'পাসওয়ার্ড আপডেট হয়েছে!' });
         }
 
-        // Run Engine on Init
+        // 🚀 অ্যাপ লোড হওয়ার সাথে সাথে ইঞ্জিন স্টার্ট করা
         processInstantReferral();
         updateUI();
         checkMandatoryGate();
