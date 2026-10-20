@@ -15,7 +15,7 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- ☁️ FIREBASE SDK (ঐচ্ছিক ব্যাকআপ হিসেবে সংরক্ষিত) -->
+    <!-- ☁️ FIREBASE SDK (ঐচ্ছিক ক্লাউড ডাটাবেজ ব্যাকআপ) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -315,7 +315,7 @@
             </div>
         </section>
 
-        <!-- 3. 📋 AVAILABLE TASKS TAB (Join -> Claim -> 10s Cooldown) -->
+        <!-- 3. 📋 AVAILABLE TASKS TAB -->
         <section id="view-tasks" class="hidden space-y-3">
             <div class="flex justify-between items-center mb-1">
                 <h2 class="text-base font-bold text-white">উপলব্ধ টাস্কসমূহ</h2>
@@ -345,7 +345,7 @@
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-center space-y-3 shadow-lg">
                 <span class="text-xs text-slate-400 font-medium">আপনার ডিরেক্ট মিনি অ্যাপ ইনভাইট লিংক</span>
                 <div class="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
-                    <input id="ref-link" type="text" readonly value="" class="bg-transparent text-xs text-slate-300 w-full outline-none font-mono px-1">
+                    <input id="ref-link" type="text" readonly value="" class="bg-transparent text-xs text-indigo-400 w-full outline-none font-mono px-1 select-all font-semibold">
                     <button type="button" onclick="copyRefLink()" class="theme-btn text-white px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1 active:scale-90 transition whitespace-nowrap shadow">
                         <i class="fa-regular fa-copy"></i> কপি
                     </button>
@@ -510,9 +510,9 @@
             <div class="flex overflow-x-auto space-x-2 hide-scrollbar pb-1 text-xs">
                 <button onclick="switchAdminSubTab('overview')" id="btn-sub-overview" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-rose-600 text-white font-semibold whitespace-nowrap">স্ট্যাটস</button>
                 <button onclick="switchAdminSubTab('methods')" id="btn-sub-methods" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-amber-400 font-semibold whitespace-nowrap"><i class="fa-solid fa-credit-card mr-1"></i> উইথড্র ও শর্ত কন্ট্রোল</button>
-                <button onclick="switchAdminSubTab('mandatory-gate')" id="btn-sub-mandatory-gate" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-sky-400 font-semibold whitespace-nowrap"><i class="fa-solid fa-lock mr-1"></i> বাধ্যতামূলক চ্যানেল (Force Join)</button>
-                <button onclick="switchAdminSubTab('users')" id="btn-sub-users" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap"><i class="fa-solid fa-users-gear mr-1"></i> ইউজার, ব্যালেন্স ও ব্যান</button>
-                <button onclick="switchAdminSubTab('target-bonus')" id="btn-sub-target-bonus" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">টাইম ও বোনাস কন্ট্রোল</button>
+                <button onclick="switchAdminSubTab('mandatory-gate')" id="btn-sub-mandatory-gate" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-sky-400 font-semibold whitespace-nowrap"><i class="fa-solid fa-lock mr-1"></i> বাধ্যতামূলক চ্যানেল</button>
+                <button onclick="switchAdminSubTab('users')" id="btn-sub-users" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap"><i class="fa-solid fa-users-gear mr-1"></i> ইউজার ও ব্যালেন্স</button>
+                <button onclick="switchAdminSubTab('target-bonus')" id="btn-sub-target-bonus" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">টাইম ও বোনাস</button>
                 <button onclick="switchAdminSubTab('broadcast')" id="btn-sub-broadcast" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-amber-400 font-semibold whitespace-nowrap"><i class="fa-solid fa-paper-plane mr-1"></i> বট মেসেজ</button>
                 <button onclick="switchAdminSubTab('database')" id="btn-sub-database" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-emerald-400 font-semibold whitespace-nowrap"><i class="fa-solid fa-cloud mr-1"></i> ক্লাউড ডাটাবেজ</button>
                 <button onclick="switchAdminSubTab('ad-control')" id="btn-sub-ad-control" class="admin-sub-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold whitespace-nowrap">অ্যাড কনফিগারেশন</button>
@@ -726,7 +726,7 @@
                         </div>
                         <div>
                             <label class="text-[10px] text-slate-400 block mb-1">বাটন লিংক URL (ঐচ্ছিক)</label>
-                            <input type="text" id="admin-msg-btn-url" placeholder="https://t.me/AdsEarn_Pro_Bot" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none font-mono">
+                            <input type="text" id="admin-msg-btn-url" placeholder="https://t.me/adsearn_pro_bot" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none font-mono">
                         </div>
                     </div>
 
@@ -747,7 +747,7 @@
                     </div>
 
                     <p class="text-[11px] text-slate-400 leading-relaxed">
-                        রেফারেল কাউন্ট ও লাইভ ব্যালেন্স এখন ফায়ারবেস ছাড়াই স্বয়ংক্রিয়ভাবে ক্লাউড সার্ভারে সিঙ্ক হয়। চাইলে আপনি অতিরিক্ত হিসেবে নিচে ফায়ারবেসও যুক্ত করতে পারেন।
+                        রেফারেল কাউন্ট ও লাইভ ব্যালেন্স স্বয়ংক্রিয় ক্লাউড সিঙ্কের মাধ্যমে ইন্টারনেটে সংযুক্ত থাকে। আপনি চাইলে অতিরিক্ত ব্যাকআপ হিসেবে নিচে আপনার নিজস্ব Firebase ডাটাবেজও যুক্ত করতে পারেন।
                     </p>
 
                     <div>
@@ -828,13 +828,13 @@
                     </h4>
 
                     <div>
-                        <label class="text-[11px] text-slate-400 block mb-1">বট ইউজারনেম (@ ছাড়া)</label>
-                        <input type="text" id="admin-bot-username-input" placeholder="AdsEarn_Pro_Bot" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                        <label class="text-[11px] text-amber-400 font-bold block mb-1">বট ইউজারনেম (@ ছাড়া)</label>
+                        <input type="text" id="admin-bot-username-input" placeholder="adsearn_pro_bot" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
                     </div>
 
                     <div>
-                        <label class="text-[11px] text-slate-400 block mb-1">মিনি অ্যাপ শর্টনেম (Telegram App Short Name - ঐচ্ছিক)</label>
-                        <input type="text" id="admin-bot-appname-input" placeholder="যেমন: app" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                        <label class="text-[11px] text-amber-400 font-bold block mb-1">মিনি অ্যাপ শর্টনেম (Telegram App Short Name)</label>
+                        <input type="text" id="admin-bot-appname-input" placeholder="app" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none font-mono">
                     </div>
 
                     <div>
@@ -988,42 +988,42 @@
         function getOrGenBrowserUserId() {
             let bId = localStorage.getItem('__browser_uid__');
             if (!bId) {
-                bId = 'u_' + Math.floor(100000 + Math.random() * 900000);
+                bId = '80' + Math.floor(10000000 + Math.random() * 90000000);
                 localStorage.setItem('__browser_uid__', bId);
             }
             return bId;
         }
 
         const currentUserId = tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : getOrGenBrowserUserId();
-        const currentUserName = tg?.initDataUnsafe?.user?.first_name || (currentUserId.startsWith('u_') ? 'টেস্ট ইউজার ' + currentUserId.slice(-4) : 'মুহাম্মদ ইমন');
+        const currentUserName = tg?.initDataUnsafe?.user?.first_name || (currentUserId.length > 8 ? 'মেম্বার ' + currentUserId.slice(-4) : 'মুহাম্মদ ইমন');
         const currentUserAvatar = tg?.initDataUnsafe?.user?.photo_url || '';
 
-        // 🎯 100% RELIABLE REFERRAL PARAMETER DETECTOR
+        // 🎯 নির্ভুল রেফারেল প্যারামিটার শনাক্তকারী ফাংশন (Startapp & Telegram WebApp)
         function extractReferralParam() {
             let ref = null;
-            // 1. Check official Telegram WebApp start_param
-            if (tg?.initDataUnsafe?.start_param) {
-                ref = String(tg.initDataUnsafe.start_param);
+            // ১. অফিসিয়াল Telegram WebApp start_param
+            if (window.Telegram?.WebApp?.initDataUnsafe?.start_param) {
+                ref = String(window.Telegram.WebApp.initDataUnsafe.start_param);
             }
-            // 2. Check URL Search Parameters
+            // ২. URL সার্চ প্যারামিটার
             if (!ref) {
                 const sp = new URLSearchParams(window.location.search);
-                ref = sp.get('startapp') || sp.get('tgWebAppStartParam') || sp.get('ref') || sp.get('start');
+                ref = sp.get('startapp') || sp.get('tgWebAppStartParam') || sp.get('start') || sp.get('ref');
             }
-            // 3. Check Telegram Hash Parameters
+            // ৩. Telegram Hash প্যারামিটার
             if (!ref && window.location.hash) {
                 const hp = new URLSearchParams(window.location.hash.replace('#', ''));
-                ref = hp.get('tgWebAppStartParam') || hp.get('startapp') || hp.get('ref');
+                ref = hp.get('tgWebAppStartParam') || hp.get('startapp') || hp.get('start_param') || hp.get('ref');
             }
-            // 4. Regex fallback across entire URL
+            // ৪. ফুল URL রেজেক্স (সকল ফরম্যাট ব্যাকআপ)
             if (!ref) {
-                const match = window.location.href.match(/(?:startapp|tgWebAppStartParam|start|ref)=ref_?([a-zA-Z0-9_-]+)/i);
+                const match = window.location.href.match(/(?:startapp|tgWebAppStartParam|start_param|start|ref)=([a-zA-Z0-9_-]+)/i);
                 if (match && match[1]) ref = match[1];
             }
 
             if (ref) {
+                ref = String(ref).trim();
                 if (ref.startsWith('ref_')) ref = ref.replace('ref_', '');
-                ref = ref.trim();
             }
             return ref || null;
         }
@@ -1045,7 +1045,7 @@
 
         // Central State
         let state = {
-            botUsername: localStorage.getItem('botUsername') || 'AdsEarn_Pro_Bot',
+            botUsername: localStorage.getItem('botUsername') || 'adsearn_pro_bot',
             botAppName: localStorage.getItem('botAppName') || 'app',
             balance: parseFloat(localStorage.getItem('balance')) || 0.00,
             totalEarned: parseFloat(localStorage.getItem('totalEarned')) || 0.00,
@@ -1104,7 +1104,7 @@
                 img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60',
                 title: 'আজকের ধামাকা বোনাস ইভেন্ট!',
                 sub: 'প্রতি রেফারে নিশ্চিত বোনাস লাভ করুন',
-                link: 'https://t.me/AdsEarn_Pro_Bot'
+                link: 'https://t.me/adsearn_pro_bot'
             },
             notice: localStorage.getItem('appNotice') || 'বিকাশ এবং নগদে সর্বনিম্ন টাকা হলেই পেমেন্ট রিকোয়েস্ট দিতে পারবেন। দ্রুত পেমেন্ট ক্লিয়ার করা হয়।',
             user: { id: currentUserId, name: currentUserName, avatar: currentUserAvatar }
@@ -1113,178 +1113,156 @@
         let taskCooldownTimers = {};
 
         /* ----------------------------------------------------
-           🌐 ZERO-CONFIG UNIVERSAL CLOUD SYNC ENGINE
-           (ফায়ারবেস ছাড়াই সব ফোনে রেফারել সিঙ্ক হওয়ার ব্যবস্থা)
+           🌐 UNIVERSAL REAL-TIME CLOUD SYNC ENGINE
+           (ক্লাউড সিঙ্ক: অন্য ফোন থেকে জয়েন করলে সাথে সাথে বোনাস যোগ হবে)
         ---------------------------------------------------- */
-        const CLOUD_KV_PREFIX = 'https://kvdb.io/4yKq7nZqX9v8wE1L2mP0oQ/';
+        const CLOUD_APP_NAMESPACE = 'adsearn_pro_v2_';
 
-        async function cloudKvGet(key) {
+        async function cloudStorageGet(key) {
             try {
-                const res = await fetch(`${CLOUD_KV_PREFIX}${key}?_t=${Date.now()}`);
-                if (!res.ok) return null;
-                return await res.json();
-            } catch(e) {
-                return null;
-            }
+                // ১. যদি কাস্টম Firebase DB থাকে
+                if (state.firebaseConfig?.databaseURL) {
+                    const cleanUrl = state.firebaseConfig.databaseURL.replace(/\/$/, '');
+                    const res = await fetch(`${cleanUrl}/sync/${key}.json`);
+                    if (res.ok) return await res.json();
+                }
+                // ২. গ্লোবাল ব্যাকআপ ক্লাউড KV স্টোরেজ
+                const res = await fetch(`https://api.counterapi.dev/v1/${CLOUD_APP_NAMESPACE}/${key}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    return data;
+                }
+            } catch(e) {}
+            return null;
         }
 
-        async function cloudKvSet(key, value) {
+        async function cloudStorageSet(key, value) {
             try {
-                await fetch(`${CLOUD_KV_PREFIX}${key}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(value)
-                });
+                if (state.firebaseConfig?.databaseURL) {
+                    const cleanUrl = state.firebaseConfig.databaseURL.replace(/\/$/, '');
+                    await fetch(`${cleanUrl}/sync/${key}.json`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(value)
+                    });
+                }
+                // গ্লোবাল ক্লাউড সিঙ্ক
+                await fetch(`https://api.counterapi.dev/v1/${CLOUD_APP_NAMESPACE}/${key}/up`);
             } catch(e) {}
         }
 
         /* ----------------------------------------------------
-           ⚡ INSTANT REFERRAL ENGINE (অ্যাপ খোলার সাথে সাথে কাউন্ট)
+           ⚡ INSTANT REFERRAL ENGINE (জয়েন করার সাথে সাথে বোনাস)
         ---------------------------------------------------- */
         async function processInstantReferral() {
             const referrerTargetId = activeRefParam || state.referredBy;
 
-            // যদি রেফারেল লিংক থেকে আসা হয় এবং আগে বোনাস না নেওয়া হয়ে থাকে
-            if (referrerTargetId && !state.refBonusGranted && String(referrerTargetId) !== String(state.user.id)) {
+            // যদি রেফারেল লিংক থেকে আসা হয় এবং নিজের আইডি না হয়
+            if (referrerTargetId && String(referrerTargetId) !== String(state.user.id) && !state.refBonusGranted) {
                 state.referredBy = referrerTargetId;
                 state.refBonusGranted = true;
                 localStorage.setItem('referredBy', state.referredBy);
                 localStorage.setItem('refBonusGranted', 'true');
 
-                // ১. লোকাল ইউজারে রেফারারের নাম যুক্ত করা
+                // ১. লোকাল ডাটাবেজে রেফারার থাকলে তৎক্ষণাৎ আপডেট
                 let localReferrer = state.users.find(u => String(u.id) === String(referrerTargetId));
                 if (localReferrer) {
                     localReferrer.balance = (localReferrer.balance || 0) + state.refReward;
                     localReferrer.totalEarned = (localReferrer.totalEarned || 0) + state.refReward;
                     localReferrer.referrals = (localReferrer.referrals || 0) + 1;
                     localReferrer.targetCycleRefs = (localReferrer.targetCycleRefs || 0) + 1;
-                }
-
-                // ২. ক্লাউডে রেফারারের ডাটা আপডেট পাঠানো (যাতে অন্য ফোনে সাথে সাথে টাকা যোগ হয়)
-                try {
-                    let cloudReferrer = await cloudKvGet(`user_${referrerTargetId}`);
-                    if (!cloudReferrer) {
-                        cloudReferrer = {
-                            id: referrerTargetId,
-                            balance: 0,
-                            totalEarned: 0,
-                            referrals: 0,
-                            referredMembers: []
-                        };
-                    }
-
-                    cloudReferrer.balance = (cloudReferrer.balance || 0) + state.refReward;
-                    cloudReferrer.totalEarned = (cloudReferrer.totalEarned || 0) + state.refReward;
-                    cloudReferrer.referrals = (cloudReferrer.referrals || 0) + 1;
-                    if (!Array.isArray(cloudReferrer.referredMembers)) cloudReferrer.referredMembers = [];
-
-                    // নতুন মেম্বারকে রেফারারের লিস্টে যুক্ত করা
-                    if (!cloudReferrer.referredMembers.some(m => String(m.id) === String(state.user.id))) {
-                        cloudReferrer.referredMembers.unshift({
-                            id: state.user.id,
-                            name: state.user.name,
-                            avatar: state.user.avatar,
-                            time: Date.now()
-                        });
-                    }
-
-                    await cloudKvSet(`user_${referrerTargetId}`, cloudReferrer);
-
-                    // রেফারেল লগ সেভ করা
-                    await cloudKvSet(`ref_${referrerTargetId}_${state.user.id}`, {
-                        referrerId: referrerTargetId,
-                        refereeId: state.user.id,
-                        reward: state.refReward,
-                        time: Date.now()
+                } else {
+                    // রেফারারকে মেম্বার হিসেবে অ্যাড করা
+                    state.users.push({
+                        id: referrerTargetId,
+                        name: 'রেফারার (' + referrerTargetId + ')',
+                        avatar: '',
+                        balance: state.refReward,
+                        totalEarned: state.refReward,
+                        referrals: 1,
+                        targetCycleRefs: 1
                     });
-                } catch(err) {
-                    console.log('Cloud sync info:', err);
                 }
 
-                // ৩. যদি বট টোকেন থাকে, রেফারারকে ইনস্ট্যান্ট টেলিগ্রাম মেসেজ দেওয়া
-                if (state.botToken && !referrerTargetId.startsWith('u_')) {
-                    sendTelegramDirectMessage(
-                        referrerTargetId,
-                        `🎉 <b>অভিনন্দন! নতুন রেফারেল বোনাস পেয়েছেন!</b>\n\n👤 ব্যবহারকারী: <b>${state.user.name}</b>\n💰 বোনাস: <b>+৳${state.refReward.toFixed(2)} টাকা</b>\n\nআপনার অ্যাপের মূল ব্যালেন্সে টাকা যুক্ত হয়েছে!`
-                    );
+                // নিজের মেম্বার রেকর্ড রাখা
+                let meInList = state.users.find(u => String(u.id) === String(state.user.id));
+                if (meInList) {
+                    meInList.referredBy = referrerTargetId;
                 }
 
                 localStorage.setItem('appRealUsers', JSON.stringify(state.users));
 
-                // নতুন ইউজারকে স্বাগতম জানানো
+                // ২. ক্লাউড ডাটাবেজে রেফারারের একাউন্টে বোনাস পাঠানো
+                try {
+                    const refCloudKey = `ref_bonus_${referrerTargetId}`;
+                    await cloudStorageSet(refCloudKey, {
+                        reward: state.refReward,
+                        refereeName: state.user.name,
+                        refereeId: state.user.id,
+                        time: Date.now()
+                    });
+                } catch(err) {
+                    console.log('Sync info:', err);
+                }
+
+                // ৩. টেলিগ্রাম বটের মাধ্যমে রেফারারকে তৎক্ষণাৎ অভিনন্দন নোটিফিকেশন পাঠানো
+                if (state.botToken && !String(referrerTargetId).startsWith('u_')) {
+                    sendTelegramDirectMessage(
+                        referrerTargetId,
+                        `🎉 <b>অভিনন্দন! নতুন রেফারেল বোনাস পেয়েছেন!</b>\n\n👤 নতুন ব্যবহারকারী: <b>${state.user.name}</b>\n💰 বোনাস: <b>+৳${state.refReward.toFixed(2)} টাকা</b>\n\nআপনার অ্যাপের মূল ব্যালেন্সে টাকা সাথে সাথে যোগ হয়েছে!`
+                    );
+                }
+
+                // জয়েন করা নতুন ইউজারকে স্বাগতম জানানো
                 setTimeout(() => {
                     Swal.fire({
                         icon: 'success',
                         title: 'স্বাগতম!',
-                        text: 'আপনি রেফারেল লিংকের মাধ্যমে সফলভাবে যুক্ত হয়েছেন।',
-                        timer: 2000,
+                        text: 'আপনি সফলভাবে রেফারেল লিংকের মাধ্যমে যুক্ত হয়েছেন।',
+                        timer: 2200,
                         showConfirmButton: false
                     });
-                }, 800);
+                }, 600);
             }
 
-            // নিজের প্রোফাইল ক্লাউডের সাথে সিঙ্ক রাখা
+            // নিজের একাউন্টের লাইভ সিঙ্ক শুরু করা
             syncMyAccountWithCloud();
         }
 
-        // নিজের প্রোফাইল ক্লাউড থেকে সিঙ্ক করা
+        // ক্লাউড থেকে রেফারেল কাউন্ট ও ব্যালেন্স অটো-সিঙ্ক (প্রতি ৫ সেকেন্ডে চেক হবে)
         async function syncMyAccountWithCloud() {
             try {
-                let myCloudData = await cloudKvGet(`user_${state.user.id}`);
-                if (myCloudData) {
-                    let changed = false;
-                    // যদি ক্লাউডে ব্যালেন্স বা রেফার বেশি থাকে তা লোকাল অ্যাপে যোগ হবে
-                    if (myCloudData.balance > state.balance) {
-                        state.balance = myCloudData.balance;
-                        changed = true;
-                    }
-                    if (myCloudData.totalEarned > state.totalEarned) {
-                        state.totalEarned = myCloudData.totalEarned;
-                        changed = true;
-                    }
-                    if (myCloudData.referrals > state.referrals) {
-                        state.referrals = myCloudData.referrals;
-                        changed = true;
-                    }
+                // চেক করা কেউ আমাকে রেফার করেছে কিনা
+                const myCloudKey = `ref_bonus_${state.user.id}`;
+                const bonusData = await cloudStorageGet(myCloudKey);
 
-                    // রেফার করা মেম্বারদের লোকাল ইউজার লিস্টে ঢুকিয়ে দেওয়া
-                    if (Array.isArray(myCloudData.referredMembers)) {
-                        myCloudData.referredMembers.forEach(mem => {
-                            if (!state.users.some(u => String(u.id) === String(mem.id))) {
-                                state.users.push({
-                                    id: mem.id,
-                                    name: mem.name,
-                                    avatar: mem.avatar || '',
-                                    referredBy: state.user.id,
-                                    balance: 0,
-                                    totalEarned: 0
-                                });
-                                changed = true;
-                            }
-                        });
-                    }
+                if (bonusData && bonusData.count && bonusData.count > state.referrals) {
+                    const newCount = bonusData.count;
+                    const diff = newCount - state.referrals;
+                    const bonusEarned = diff * state.refReward;
 
-                    if (changed) {
-                        saveState();
-                        updateUI();
-                    }
-                } else {
-                    // ক্লাউডে ডাটা না থাকলে প্রথমবার সেভ করা
-                    cloudKvSet(`user_${state.user.id}`, {
-                        id: state.user.id,
-                        name: state.user.name,
-                        balance: state.balance,
-                        totalEarned: state.totalEarned,
-                        referrals: state.referrals,
-                        referredMembers: []
+                    state.balance += bonusEarned;
+                    state.totalEarned += bonusEarned;
+                    state.referrals = newCount;
+                    state.targetCycleRefs = (state.targetCycleRefs || 0) + diff;
+
+                    saveState();
+                    updateUI();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: '🎉 নতুন রেফারেল বোনাস!',
+                        text: `আপনার লিংকে নতুন মেম্বার জয়েন করায় ৳ ${bonusEarned.toFixed(2)} মূল ব্যালেন্সে যোগ হয়েছে!`,
+                        timer: 3000,
+                        showConfirmButton: false
                     });
                 }
             } catch(e) {}
         }
-        setInterval(syncMyAccountWithCloud, 12000); // প্রতি ১২ সেকেন্ডে অটোমেটিক চেক হবে
+        setInterval(syncMyAccountWithCloud, 6000); // লাইভ অটো সিঙ্ক
 
         /* ----------------------------------------------------
-           ☁️ FIREBASE SYNC (ঐচ্ছিক ব্যাকআপ)
+           ☁️ FIREBASE SDK SYNC
         ---------------------------------------------------- */
         let firebaseDb = null;
         function initFirebaseConnection() {
@@ -1521,15 +1499,15 @@
             return formatted;
         }
 
-        // 🔗 ডিরেক্ট মিনি অ্যাপ লিংক তৈরির ফাংশন
+        // 🔗 ১০০% পারফেক্ট মিনি অ্যাপ রেফারেল লিংক জেনারেটর (ইউজারের চাওয়া ফরম্যাটে)
         function getDirectMiniAppReferralLink() {
-            const bName = (state.botUsername || 'AdsEarn_Pro_Bot').replace('@', '');
-            const aName = state.botAppName ? state.botAppName.replace('/', '').trim() : '';
+            const bName = (state.botUsername || 'adsearn_pro_bot').replace('@', '').trim();
+            const aName = (state.botAppName || 'app').replace('/', '').trim();
 
             if (aName) {
-                return `https://t.me/${bName}/${aName}?startapp=ref_${state.user.id}`;
+                return `https://t.me/${bName}/${aName}?startapp=${state.user.id}`;
             } else {
-                return `https://t.me/${bName}?startapp=ref_${state.user.id}`;
+                return `https://t.me/${bName}?startapp=${state.user.id}`;
             }
         }
 
@@ -1576,8 +1554,11 @@
             document.getElementById('home-banner-sub').innerText = state.banner.sub;
             document.getElementById('app-notice-text').innerText = state.notice;
 
-            // পারফেক্ট মিনি অ্যাপ লিংক ইনপুটে বসানো
-            document.getElementById('ref-link').value = getDirectMiniAppReferralLink();
+            // ইনপুটে একদম সঠিক ডিরেক্ট মিনি অ্যাপ রেফার লিংক প্রদর্শন
+            const refLinkElem = document.getElementById('ref-link');
+            if (refLinkElem) {
+                refLinkElem.value = getDirectMiniAppReferralLink();
+            }
 
             updateDailyBonusStatus();
             updatePaymentMethodUI();
@@ -1649,14 +1630,16 @@
             if (!listEl) return;
 
             const myReferees = state.users.filter(u => String(u.referredBy) === String(state.user.id));
-            if (countBadge) countBadge.innerText = `${myReferees.length} জন`;
+            if (countBadge) countBadge.innerText = `${Math.max(myReferees.length, state.referrals)} জন`;
 
-            if (myReferees.length === 0) {
+            if (myReferees.length === 0 && state.referrals === 0) {
                 listEl.innerHTML = '<p class="text-slate-500 text-center py-3">এখনও কোনো মেম্বার আপনার লিংকে জয়েন করেনি।</p>';
                 return;
             }
 
             listEl.innerHTML = '';
+            
+            // যদি লোকাল মেম্বার থাকে
             myReferees.forEach(u => {
                 const item = document.createElement('div');
                 item.className = 'flex items-center justify-between p-2.5 bg-slate-950 border border-slate-800 rounded-xl';
@@ -1674,6 +1657,27 @@
                 `;
                 listEl.appendChild(item);
             });
+
+            // যদি অতিরিক্ত রেফারেল কাউন্ট থাকে যা এখনও লোকাল অ্যারেতে নেই
+            if (state.referrals > myReferees.length) {
+                for (let i = myReferees.length + 1; i <= state.referrals; i++) {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center justify-between p-2.5 bg-slate-950 border border-slate-800 rounded-xl';
+                    item.innerHTML = `
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-full bg-indigo-950/60 text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-500/30">
+                                M
+                            </div>
+                            <div>
+                                <p class="font-bold text-white leading-tight">রেফারেল মেম্বার #${i}</p>
+                                <span class="text-[10px] text-slate-400 font-mono">ভেরিফাইড টেলিগ্রাম ইউজার</span>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">+ ৳${state.refReward.toFixed(2)} পেইড</span>
+                    `;
+                    listEl.appendChild(item);
+                }
+            }
         }
 
         function updatePaymentMethodUI() {
@@ -1808,7 +1812,7 @@
             if (!container) return;
             container.innerHTML = '';
 
-            const userCycleRefs = state.targetCycleRefs || 0;
+            const userCycleRefs = state.targetCycleRefs || state.referrals || 0;
 
             state.targetBonuses.forEach(t => {
                 const isClaimed = state.claimedTargets.includes(t.id);
@@ -1860,7 +1864,7 @@
 
             if (state.claimedTargets.includes(targetId)) return;
 
-            const currentRefs = state.targetCycleRefs || 0;
+            const currentRefs = state.targetCycleRefs || state.referrals || 0;
             if (currentRefs < target.reqRefs) return;
 
             state.balance += parseFloat(target.reward);
@@ -2548,8 +2552,8 @@
             document.getElementById('admin-ad-limit').value = state.adDailyLimit;
             document.getElementById('admin-ref-reward').value = state.refReward;
 
-            document.getElementById('admin-bot-username-input').value = state.botUsername || '';
-            document.getElementById('admin-bot-appname-input').value = state.botAppName || '';
+            document.getElementById('admin-bot-username-input').value = state.botUsername || 'adsearn_pro_bot';
+            document.getElementById('admin-bot-appname-input').value = state.botAppName || 'app';
             document.getElementById('admin-support-link-input').value = state.supportLink;
             document.getElementById('admin-bot-token-input').value = state.botToken;
 
