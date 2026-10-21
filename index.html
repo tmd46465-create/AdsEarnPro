@@ -534,7 +534,7 @@
             } catch(e){}
         }
 
-        // 🆔 ইউনিক ইউজার শনাক্তকরণ
+        // 🆔 ইউনিক ইউজার শনাক্তকরণ (স্থায়ী লোকালস্টোরেজ ব্যাকআপসহ)
         function getTelegramUser() {
             let u = tg?.initDataUnsafe?.user;
             if (u && u.id) {
@@ -555,9 +555,10 @@
                     avatar: ''
                 };
             }
-            let sid = sessionStorage.getItem('__app_current_user_id__');
+            let sid = localStorage.getItem('__app_current_user_id__') || sessionStorage.getItem('__app_current_user_id__');
             if (!sid) {
                 sid = '80' + Math.floor(10000000 + Math.random() * 90000000);
+                localStorage.setItem('__app_current_user_id__', sid);
                 sessionStorage.setItem('__app_current_user_id__', sid);
             }
             return {
@@ -582,7 +583,7 @@
                 ref = sp.get('startapp') || sp.get('tgWebAppStartParam') || sp.get('start') || sp.get('ref');
             }
             if (!ref && window.location.hash) {
-                const hp = new URLSearchParams(window.location.hash.replace('#', ''));
+                const hp = new URLSearchParams(window.location.hash.replace('#', '').replace('?', '&'));
                 ref = hp.get('tgWebAppStartParam') || hp.get('startapp') || hp.get('start_param') || hp.get('ref');
             }
             if (!ref) {
@@ -621,7 +622,6 @@
             { id: 5, reqRefs: 1000, reward: 500.00 }
         ];
 
-        // 🌟 ৫০টি দৈনিক অ্যাড লিমিট কনফিগারেশন
         let savedDailyAdLimit = parseInt(localStorage.getItem('adDailyLimit'));
         if (!savedDailyAdLimit || savedDailyAdLimit < 50) {
             savedDailyAdLimit = 50;
@@ -636,7 +636,7 @@
             firebaseConfig: JSON.parse(localStorage.getItem('firebaseConfig') || '{"apiKey":"","databaseURL":""}'),
             
             adReward: parseFloat(localStorage.getItem('adReward')) || 0.50,
-            adDailyLimit: savedDailyAdLimit, // ৫০টি অ্যাড
+            adDailyLimit: savedDailyAdLimit,
             refReward: parseFloat(localStorage.getItem('refReward')) || 5.00,
             minWithdraw: parseFloat(localStorage.getItem('minWithdraw')) || 50.00,
             requireAllTasksForWithdraw: (localStorage.getItem('requireAllTasksForWithdraw') !== null) ? (localStorage.getItem('requireAllTasksForWithdraw') === 'true') : true,
@@ -700,9 +700,7 @@
         ---------------------------------------------------- */
         function getBangladeshMidnightCountdown() {
             const now = new Date();
-            // UTC টাইম বের করা হচ্ছে
             const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
-            // বাংলাদেশ টাইম (UTC + 6 ঘণ্টা)
             const bdMs = utcMs + (6 * 3600000);
             const bdNow = new Date(bdMs);
 
@@ -710,10 +708,8 @@
             const month = bdNow.getMonth();
             const date = bdNow.getDate();
 
-            // পরবর্তী বাংলাদেশ রাত ১২:০০:০০ (পরবর্তী দিনের শুরু)
             const nextBdMidnight = new Date(year, month, date + 1, 0, 0, 0, 0);
             const diffMs = nextBdMidnight.getTime() - bdMs;
-
             const bdDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
 
             return {
@@ -722,7 +718,6 @@
             };
         }
 
-        // রাত ১২টার পর অ্যাড ৫০ টায় অটো রিসেট চেক (ব্যালেন্স অপরিবর্তিত থাকবে)
         function checkDailyAdReset() {
             const { bdDateStr } = getBangladeshMidnightCountdown();
             const lastReset = userStorageGet('lastAdResetDate', null);
@@ -738,7 +733,6 @@
             }
         }
 
-        // প্রতি সেকেন্ডে রিসেট হওয়ার বাকি সময় আপডেট
         function updateAdResetCountdown() {
             checkDailyAdReset();
             const { diffMs } = getBangladeshMidnightCountdown();
@@ -756,7 +750,7 @@
         setInterval(updateAdResetCountdown, 1000);
 
         /* ----------------------------------------------------
-           🌐 REALTIME CLOUD DATABASE ENGINE
+           🌐 REALTIME CLOUD DATABASE ENGINE (Fixes Applied)
         ---------------------------------------------------- */
         const CLOUD_SYNC_RELAY = 'https://jsonblob.com/api/jsonBlob/1339578278281084928';
 
@@ -765,20 +759,24 @@
 
             async pull() {
                 try {
+                    let cloudData = null;
                     if (state.firebaseConfig?.databaseURL) {
                         const cleanUrl = state.firebaseConfig.databaseURL.replace(/\/$/, '');
                         const res = await fetch(`${cleanUrl}/adsearn_pro_v2_data.json`);
                         if (res.ok) {
-                            const data = await res.json();
-                            if (data) this.applyCloudState(data);
-                            return;
+                            cloudData = await res.json();
                         }
                     }
 
-                    const res = await fetch(CLOUD_SYNC_RELAY, { headers: { 'Accept': 'application/json' } });
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data) this.applyCloudState(data);
+                    if (!cloudData) {
+                        const res = await fetch(CLOUD_SYNC_RELAY, { headers: { 'Accept': 'application/json' } });
+                        if (res.ok) {
+                            cloudData = await res.json();
+                        }
+                    }
+
+                    if (cloudData) {
+                        this.applyCloudState(cloudData);
                     }
                 } catch(e) {}
             },
@@ -786,6 +784,14 @@
             async push() {
                 if (this.isSyncing) return;
                 this.isSyncing = true;
+
+                // নিশ্চিত করা যে বর্তমান ইউজার তালিকায় রয়েছে
+                let meIdx = state.users.findIndex(u => String(u.id) === String(state.user.id));
+                if (meIdx === -1) {
+                    state.users.push(state.user);
+                } else {
+                    state.users[meIdx] = { ...state.users[meIdx], ...state.user };
+                }
 
                 const payload = {
                     config: {
@@ -807,7 +813,8 @@
                         targetBonuses: state.targetBonuses,
                         paymentMethods: state.paymentMethods,
                         supportLink: state.supportLink,
-                        botToken: state.botToken
+                        botToken: state.botToken,
+                        firebaseConfig: state.firebaseConfig
                     },
                     users: state.users,
                     withdrawals: state.withdrawals,
@@ -824,7 +831,7 @@
                         }).catch(() => {});
                     }
 
-                    fetch(CLOUD_SYNC_RELAY, {
+                    await fetch(CLOUD_SYNC_RELAY, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify(payload)
@@ -859,6 +866,10 @@
                     if (c.botAppName) state.botAppName = c.botAppName;
                     if (c.supportLink) state.supportLink = c.supportLink;
                     if (c.botToken) state.botToken = c.botToken;
+                    if (c.firebaseConfig && !state.firebaseConfig?.databaseURL) {
+                        state.firebaseConfig = c.firebaseConfig;
+                        localStorage.setItem('firebaseConfig', JSON.stringify(c.firebaseConfig));
+                    }
                 }
 
                 if (Array.isArray(cloud.withdrawals)) {
@@ -866,7 +877,25 @@
                 }
 
                 if (Array.isArray(cloud.users)) {
-                    state.users = cloud.users;
+                    // 🛡️ নতুন ইউজার ডিলিট রোধ করতে মার্জিং (Smart Merge)
+                    const userMap = new Map();
+                    cloud.users.forEach(u => {
+                        if (u && u.id) userMap.set(String(u.id), u);
+                    });
+
+                    // লোকাল ইউজারদের যুক্ত রাখা
+                    state.users.forEach(u => {
+                        if (u && u.id && !userMap.has(String(u.id))) {
+                            userMap.set(String(u.id), u);
+                        }
+                    });
+
+                    // কারেন্ট ইউজারকে নিশ্চিতভাবে তালিকায় রাখা
+                    if (!userMap.has(String(state.user.id))) {
+                        userMap.set(String(state.user.id), state.user);
+                    }
+
+                    state.users = Array.from(userMap.values());
 
                     const meInCloud = state.users.find(u => String(u.id) === String(state.user.id));
                     if (meInCloud) {
@@ -897,7 +926,7 @@
         }, 4000);
 
         /* ----------------------------------------------------
-           ⚡ রেফারেল সিস্টেম
+           ⚡ রেফারেল সিস্টেম (Realtime Sync & Fixes)
         ---------------------------------------------------- */
         async function processInstantReferral() {
             ensureCurrentUserRegistered();
@@ -932,16 +961,12 @@
                     state.users.push(referrer);
                 }
 
-                localStorage.setItem(`u_${refTargetId}_balance`, referrer.balance);
-                localStorage.setItem(`u_${refTargetId}_totalEarned`, referrer.totalEarned);
-                localStorage.setItem(`u_${refTargetId}_referrals`, referrer.referrals);
-                localStorage.setItem(`u_${refTargetId}_targetCycleRefs`, referrer.targetCycleRefs);
-
                 const me = state.users.find(u => String(u.id) === String(state.user.id));
                 if (me) {
                     me.referredBy = String(refTargetId);
                 }
 
+                // সাথে সাথে ক্লাউডে পুশ করা হচ্ছে যেন অন্য ফোনে তৎক্ষণাৎ যুক্ত হয়
                 saveState();
 
                 setTimeout(() => {
@@ -961,6 +986,8 @@
         ---------------------------------------------------- */
         function ensureCurrentUserRegistered() {
             let userObj = state.users.find(u => String(u.id) === String(state.user.id));
+            let isNew = false;
+
             if (!userObj) {
                 userObj = {
                     id: String(state.user.id),
@@ -977,6 +1004,7 @@
                     targetStartTime: state.user.targetStartTime || Date.now()
                 };
                 state.users.push(userObj);
+                isNew = true;
             } else {
                 userObj.name = state.user.name;
                 userObj.username = state.user.username;
@@ -991,6 +1019,9 @@
             }
 
             saveLocalCacheOnly();
+            if (isNew) {
+                CloudDatabase.push(); // নতুন ইউজার হলে সাথে সাথে ক্লাউডে পাঠানো
+            }
         }
 
         /* ----------------------------------------------------
@@ -1957,7 +1988,9 @@
             checkDailyAdReset();
             updateAdResetCountdown();
             await CloudDatabase.pull();
+            ensureCurrentUserRegistered();
             await processInstantReferral();
+            saveState(); // প্রথমবার ঢুকলেই সার্ভারে নতুন ইউজার নিশ্চিতভাবে সংরক্ষণ
             updateUI();
             checkMandatoryGate();
         })();
