@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- SweetAlert2 -->
+    <!-- SweetAlert2 (সঠিক CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- ☁️ FIREBASE SDK -->
@@ -545,7 +545,7 @@
             appId: "1:566134627308:web:4a70df112e818b95c17ec9"
         };
 
-        // 🆔 ইউনিক ইউজার শনাক্তকরণ
+        // 🆔 ইউনিক ইউজার শনাক্তকরণ (Persistent)
         function getTelegramUser() {
             let u = tg?.initDataUnsafe?.user;
             if (u && u.id) {
@@ -566,10 +566,10 @@
                     avatar: ''
                 };
             }
-            let sid = sessionStorage.getItem('__app_current_user_id__');
+            let sid = localStorage.getItem('__app_current_user_id__');
             if (!sid) {
                 sid = '80' + Math.floor(10000000 + Math.random() * 90000000);
-                sessionStorage.setItem('__app_current_user_id__', sid);
+                localStorage.setItem('__app_current_user_id__', sid);
             }
             return {
                 id: sid,
@@ -612,7 +612,12 @@
         function userStorageGet(key, fallback) {
             const val = localStorage.getItem(`u_${currentUserId}_${key}`);
             if (val === null || val === undefined) return fallback;
-            try { return JSON.parse(val); } catch(e) { return val; }
+            try { 
+                const parsed = JSON.parse(val); 
+                return parsed !== null ? parsed : fallback;
+            } catch(e) { 
+                return val; 
+            }
         }
 
         function userStorageSet(key, val) {
@@ -632,11 +637,7 @@
             { id: 5, reqRefs: 1000, reward: 500.00 }
         ];
 
-        let savedDailyAdLimit = parseInt(localStorage.getItem('adDailyLimit'));
-        if (!savedDailyAdLimit || savedDailyAdLimit < 50) {
-            savedDailyAdLimit = 50;
-            localStorage.setItem('adDailyLimit', '50');
-        }
+        let savedDailyAdLimit = parseInt(localStorage.getItem('adDailyLimit')) || 50;
 
         let state = {
             botUsername: localStorage.getItem('botUsername') || 'adsearn_pro_bot',
@@ -685,13 +686,13 @@
                 name: activeTelegramUser.name,
                 username: activeTelegramUser.username,
                 avatar: activeTelegramUser.avatar,
-                balance: parseFloat(userStorageGet('balance', 0.00)),
-                totalEarned: parseFloat(userStorageGet('totalEarned', 0.00)),
-                referrals: parseInt(userStorageGet('referrals', 0)),
+                balance: parseFloat(userStorageGet('balance', 0.00)) || 0.00,
+                totalEarned: parseFloat(userStorageGet('totalEarned', 0.00)) || 0.00,
+                referrals: parseInt(userStorageGet('referrals', 0)) || 0,
                 referredBy: userStorageGet('referredBy', null),
                 joinedAt: userStorageGet('joinedAt', new Date().toISOString()),
                 isBanned: userStorageGet('isBanned', false),
-                targetCycleRefs: parseInt(userStorageGet('targetCycleRefs', 0)),
+                targetCycleRefs: parseInt(userStorageGet('targetCycleRefs', 0)) || 0,
                 targetStartTime: parseInt(userStorageGet('targetStartTime', Date.now()))
             },
 
@@ -699,10 +700,61 @@
             lastDailyClaimTime: parseInt(userStorageGet('lastDailyClaimTime', 0)),
             completedTasks: userStorageGet('completedTasks', []),
             clickedTasks: userStorageGet('clickedTasks', []),
-            claimedTargets: userStorageGet('claimedTargets', [])
+            claimedTargets: userStorageGet('claimedTargets', []),
+            lastLocalBalanceUpdate: 0
         };
 
         let taskCooldownTimers = {};
+
+        // 🔄 ইউজার অবজেক্ট ও গ্লোবাল ইউজার লিস্ট সবসময় শতভাগ সিঙ্ক রাখার ফাংশন
+        function syncUserWithGlobalList() {
+            let uObj = state.users.find(u => String(u && u.id) === String(state.user.id));
+            if (!uObj) {
+                uObj = {
+                    id: String(state.user.id),
+                    name: state.user.name,
+                    username: state.user.username,
+                    avatar: state.user.avatar,
+                    balance: parseFloat(state.user.balance) || 0,
+                    totalEarned: parseFloat(state.user.totalEarned) || 0,
+                    referrals: parseInt(state.user.referrals) || 0,
+                    referredBy: state.user.referredBy || null,
+                    joinedAt: state.user.joinedAt || new Date().toISOString(),
+                    isBanned: state.user.isBanned || false,
+                    targetCycleRefs: parseInt(state.user.targetCycleRefs) || 0,
+                    targetStartTime: state.user.targetStartTime || Date.now()
+                };
+                state.users.push(uObj);
+            } else {
+                uObj.name = state.user.name;
+                uObj.username = state.user.username;
+                if (state.user.avatar) uObj.avatar = state.user.avatar;
+                uObj.balance = parseFloat(state.user.balance) || 0;
+                uObj.totalEarned = parseFloat(state.user.totalEarned) || 0;
+                uObj.referrals = parseInt(state.user.referrals) || 0;
+                if (state.user.referredBy) uObj.referredBy = state.user.referredBy;
+                uObj.isBanned = state.user.isBanned || false;
+                uObj.targetCycleRefs = parseInt(state.user.targetCycleRefs) || 0;
+                uObj.targetStartTime = state.user.targetStartTime || Date.now();
+            }
+
+            const bannedScreen = document.getElementById('banned-screen');
+            if (uObj.isBanned && String(uObj.id) !== MASTER_ADMIN_ID) {
+                bannedScreen.classList.remove('hidden');
+            } else {
+                bannedScreen.classList.add('hidden');
+            }
+        }
+
+        // 💰 নিশ্চিত ব্যালেন্স যোগ করার ফাংশন
+        function addEarnings(amount) {
+            const val = parseFloat(amount) || 0;
+            if (val <= 0) return;
+            state.lastLocalBalanceUpdate = Date.now();
+            state.user.balance = Math.round(((parseFloat(state.user.balance) || 0) + val) * 100) / 100;
+            state.user.totalEarned = Math.round(((parseFloat(state.user.totalEarned) || 0) + val) * 100) / 100;
+            saveState();
+        }
 
         /* ----------------------------------------------------
            🇧🇩 BANGLADESH MIDNIGHT AD RESET ENGINE (GMT+6)
@@ -795,29 +847,10 @@
             async push() {
                 if (this.isSyncing) return;
                 this.isSyncing = true;
+                syncUserWithGlobalList();
 
+                // কন্ট্রোল প্যানেলের কনফিগ যাতে ক্ষতিগ্রস্ত না হয়, শুধুমাত্র ইউজার ও উইথড্র তথ্য আপডেট হবে
                 const payload = {
-                    config: {
-                        botUsername: state.botUsername,
-                        botAppName: state.botAppName,
-                        adReward: state.adReward,
-                        adDailyLimit: state.adDailyLimit,
-                        refReward: state.refReward,
-                        minWithdraw: state.minWithdraw,
-                        requireAllTasksForWithdraw: state.requireAllTasksForWithdraw,
-                        minReferralsForWithdraw: state.minReferralsForWithdraw,
-                        dailyBonusAmount: state.dailyBonusAmount,
-                        dailyBonusHours: state.dailyBonusHours,
-                        targetBonusHours: state.targetBonusHours,
-                        banner: state.banner,
-                        notice: state.notice,
-                        tasks: state.tasks,
-                        mandatoryChannels: state.mandatoryChannels,
-                        targetBonuses: state.targetBonuses,
-                        paymentMethods: state.paymentMethods,
-                        supportLink: state.supportLink,
-                        botToken: state.botToken
-                    },
                     users: state.users,
                     withdrawals: state.withdrawals,
                     lastUpdated: Date.now()
@@ -825,73 +858,108 @@
 
                 try {
                     if (fbDbRef) {
-                        fbDbRef.set(payload).catch(() => {});
+                        await fbDbRef.update(payload);
                     } else {
                         const cleanUrl = (state.firebaseConfig?.databaseURL || ORIGINAL_FIREBASE_CONFIG.databaseURL).replace(/\/$/, '');
-                        fetch(`${cleanUrl}/adsearn_pro_v2_data.json`, {
-                            method: 'PUT',
+                        await fetch(`${cleanUrl}/adsearn_pro_v2_data.json`, {
+                            method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(payload)
-                        }).catch(() => {});
+                        });
                     }
-                } catch(e) {}
-                finally {
+                } catch(e) {
+                    console.warn('Firebase sync warning:', e);
+                } finally {
                     this.isSyncing = false;
+                    state.lastLocalBalanceUpdate = 0;
                 }
             },
 
             applyCloudState(cloud) {
                 if (!cloud) return;
 
+                // ১. কন্ট্রোল প্যানেল থেকে কনফিগারেশন গ্রহণ
                 if (cloud.config) {
                     const c = cloud.config;
                     if (c.banner) state.banner = c.banner;
                     if (c.notice) state.notice = c.notice;
-                    if (c.tasks) state.tasks = c.tasks;
-                    if (c.mandatoryChannels) state.mandatoryChannels = c.mandatoryChannels;
-                    if (c.targetBonuses) state.targetBonuses = c.targetBonuses;
+                    if (c.tasks) state.tasks = Array.isArray(c.tasks) ? c.tasks : Object.values(c.tasks);
+                    if (c.mandatoryChannels) state.mandatoryChannels = Array.isArray(c.mandatoryChannels) ? c.mandatoryChannels : Object.values(c.mandatoryChannels);
+                    if (c.targetBonuses) state.targetBonuses = Array.isArray(c.targetBonuses) ? c.targetBonuses : Object.values(c.targetBonuses);
                     if (c.paymentMethods) state.paymentMethods = c.paymentMethods;
-                    if (c.adReward !== undefined) state.adReward = c.adReward;
-                    if (c.adDailyLimit !== undefined) state.adDailyLimit = Math.max(50, parseInt(c.adDailyLimit) || 50);
-                    if (c.refReward !== undefined) state.refReward = c.refReward;
-                    if (c.minWithdraw !== undefined) state.minWithdraw = c.minWithdraw;
+                    if (c.adReward !== undefined) state.adReward = parseFloat(c.adReward) || 0.50;
+                    if (c.adDailyLimit !== undefined) state.adDailyLimit = Math.max(1, parseInt(c.adDailyLimit) || 50);
+                    if (c.refReward !== undefined) state.refReward = parseFloat(c.refReward) || 5.00;
+                    if (c.minWithdraw !== undefined) state.minWithdraw = parseFloat(c.minWithdraw) || 50.00;
                     if (c.requireAllTasksForWithdraw !== undefined) state.requireAllTasksForWithdraw = c.requireAllTasksForWithdraw;
-                    if (c.minReferralsForWithdraw !== undefined) state.minReferralsForWithdraw = c.minReferralsForWithdraw;
-                    if (c.dailyBonusAmount !== undefined) state.dailyBonusAmount = c.dailyBonusAmount;
-                    if (c.dailyBonusHours !== undefined) state.dailyBonusHours = c.dailyBonusHours;
-                    if (c.targetBonusHours !== undefined) state.targetBonusHours = c.targetBonusHours;
+                    if (c.minReferralsForWithdraw !== undefined) state.minReferralsForWithdraw = parseInt(c.minReferralsForWithdraw) || 0;
+                    if (c.dailyBonusAmount !== undefined) state.dailyBonusAmount = parseFloat(c.dailyBonusAmount) || 1.00;
+                    if (c.dailyBonusHours !== undefined) state.dailyBonusHours = parseInt(c.dailyBonusHours) || 24;
+                    if (c.targetBonusHours !== undefined) state.targetBonusHours = parseInt(c.targetBonusHours) || 24;
                     if (c.botUsername) state.botUsername = c.botUsername;
                     if (c.botAppName) state.botAppName = c.botAppName;
                     if (c.supportLink) state.supportLink = c.supportLink;
                     if (c.botToken) state.botToken = c.botToken;
                 }
 
-                if (Array.isArray(cloud.withdrawals)) {
-                    state.withdrawals = cloud.withdrawals;
+                if (cloud.withdrawals) {
+                    state.withdrawals = Array.isArray(cloud.withdrawals) ? cloud.withdrawals : Object.values(cloud.withdrawals);
                 }
 
-                if (Array.isArray(cloud.users)) {
-                    state.users = cloud.users;
-
-                    const meInCloud = state.users.find(u => String(u.id) === String(state.user.id));
+                // ২. কন্ট্রোল প্যানেল ও ক্লাউড অনুযায়ী ইউজারের সঠিক ব্যালেন্স সিঙ্ক
+                if (cloud.users) {
+                    const incomingUsers = Array.isArray(cloud.users) ? cloud.users : Object.values(cloud.users);
+                    const meInCloud = incomingUsers.find(u => String(u && u.id) === String(state.user.id));
+                    
                     if (meInCloud) {
-                        state.user.balance = meInCloud.balance !== undefined ? meInCloud.balance : state.user.balance;
-                        state.user.totalEarned = meInCloud.totalEarned !== undefined ? meInCloud.totalEarned : state.user.totalEarned;
-                        state.user.referrals = meInCloud.referrals || 0;
-                        state.user.isBanned = meInCloud.isBanned || false;
-                        state.user.targetCycleRefs = meInCloud.targetCycleRefs || 0;
-                        if (meInCloud.targetStartTime) state.user.targetStartTime = meInCloud.targetStartTime;
-                        if (meInCloud.referredBy) state.user.referredBy = meInCloud.referredBy;
+                        // যদি ইউজার এই মুহূর্তে লোকালি কোনো বাটন না টিপে থাকে, তাহলে কন্ট্রোল প্যানেলের ব্যালেন্স হুবহু গ্রহণ করা হবে
+                        if (!state.lastLocalBalanceUpdate) {
+                            if (meInCloud.balance !== undefined) {
+                                state.user.balance = parseFloat(meInCloud.balance) || 0;
+                            }
+                            if (meInCloud.totalEarned !== undefined) {
+                                state.user.totalEarned = parseFloat(meInCloud.totalEarned) || 0;
+                            }
+                        } else {
+                            // লোকাল ট্রানজ্যাকশন শেষ না হওয়া পর্যন্ত সর্বোচ্চ ব্যালেন্স ধরে রাখা হবে
+                            const cloudBal = parseFloat(meInCloud.balance) || 0;
+                            const localBal = parseFloat(state.user.balance) || 0;
+                            if (cloudBal > localBal) {
+                                state.user.balance = cloudBal;
+                            }
+                            const cloudEarned = parseFloat(meInCloud.totalEarned) || 0;
+                            const localEarned = parseFloat(state.user.totalEarned) || 0;
+                            if (cloudEarned > localEarned) {
+                                state.user.totalEarned = cloudEarned;
+                            }
+                        }
 
-                        userStorageSet('balance', state.user.balance);
-                        userStorageSet('totalEarned', state.user.totalEarned);
-                        userStorageSet('referrals', state.user.referrals);
-                        userStorageSet('isBanned', state.user.isBanned);
-                        userStorageSet('targetCycleRefs', state.user.targetCycleRefs);
-                        userStorageSet('targetStartTime', state.user.targetStartTime);
+                        if (meInCloud.referrals !== undefined) {
+                            state.user.referrals = parseInt(meInCloud.referrals) || 0;
+                        }
+                        if (meInCloud.isBanned !== undefined) state.user.isBanned = meInCloud.isBanned;
+                        if (meInCloud.referredBy) state.user.referredBy = meInCloud.referredBy;
+                        if (meInCloud.targetCycleRefs !== undefined) {
+                            state.user.targetCycleRefs = parseInt(meInCloud.targetCycleRefs) || 0;
+                        }
                     }
+
+                    // ইউজার ম্যাপ ডুপ্লিকেশন দূর করে নির্ভুলভাবে সংরক্ষণ
+                    const userMap = new Map();
+                    state.users.forEach(u => { if (u && u.id) userMap.set(String(u.id), u); });
+                    incomingUsers.forEach(incUser => {
+                        if (!incUser || !incUser.id) return;
+                        const uid = String(incUser.id);
+                        if (uid === String(state.user.id)) {
+                            userMap.set(uid, { ...incUser, ...state.user, balance: state.user.balance, totalEarned: state.user.totalEarned });
+                        } else {
+                            userMap.set(uid, incUser);
+                        }
+                    });
+                    state.users = Array.from(userMap.values());
                 }
 
+                syncUserWithGlobalList();
                 saveLocalCacheOnly();
                 updateUI();
             }
@@ -901,27 +969,29 @@
            ⚡ রেফারেল সিস্টেম
         ---------------------------------------------------- */
         async function processInstantReferral() {
-            ensureCurrentUserRegistered();
+            syncUserWithGlobalList();
             const refTargetId = activeRefParam;
 
             if (refTargetId && String(refTargetId) !== String(state.user.id) && !state.user.referredBy) {
                 state.user.referredBy = String(refTargetId);
                 userStorageSet('referredBy', state.user.referredBy);
 
-                let referrer = state.users.find(u => String(u.id) === String(refTargetId));
+                let referrer = state.users.find(u => String(u && u.id) === String(refTargetId));
+                const refBonus = parseFloat(state.refReward) || 5.00;
+
                 if (referrer) {
-                    referrer.balance = (referrer.balance || 0) + state.refReward;
-                    referrer.totalEarned = (referrer.totalEarned || 0) + state.refReward;
-                    referrer.referrals = (referrer.referrals || 0) + 1;
-                    referrer.targetCycleRefs = (referrer.targetCycleRefs || 0) + 1;
+                    referrer.balance = Math.round(((parseFloat(referrer.balance) || 0) + refBonus) * 100) / 100;
+                    referrer.totalEarned = Math.round(((parseFloat(referrer.totalEarned) || 0) + refBonus) * 100) / 100;
+                    referrer.referrals = (parseInt(referrer.referrals) || 0) + 1;
+                    referrer.targetCycleRefs = (parseInt(referrer.targetCycleRefs) || 0) + 1;
                 } else {
                     referrer = {
                         id: String(refTargetId),
                         name: 'মেম্বার ' + String(refTargetId).slice(-4),
                         username: '',
                         avatar: '',
-                        balance: state.refReward,
-                        totalEarned: state.refReward,
+                        balance: refBonus,
+                        totalEarned: refBonus,
                         referrals: 1,
                         referredBy: null,
                         joinedAt: new Date().toISOString(),
@@ -932,65 +1002,20 @@
                     state.users.push(referrer);
                 }
 
-                localStorage.setItem(`u_${refTargetId}_balance`, referrer.balance);
-                localStorage.setItem(`u_${refTargetId}_totalEarned`, referrer.totalEarned);
-                localStorage.setItem(`u_${refTargetId}_referrals`, referrer.referrals);
-                localStorage.setItem(`u_${refTargetId}_targetCycleRefs`, referrer.targetCycleRefs);
-
-                const me = state.users.find(u => String(u.id) === String(state.user.id));
-                if (me) {
-                    me.referredBy = String(refTargetId);
-                }
-
                 saveState();
 
                 setTimeout(() => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'স্বাগতম!',
-                        text: 'আপনি সফলভাবে রেফারেল লিংকের মাধ্যমে যোগদান করেছেন। কাজ শুরু করে ইনকাম করুন!',
-                        timer: 2500,
-                        showConfirmButton: false
-                    });
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'স্বাগতম!',
+                            text: 'আপনি সফলভাবে রেফারেল লিংকের মাধ্যমে যোগদান করেছেন। কাজ শুরু করে ইনকাম করুন!',
+                            timer: 2500,
+                            showConfirmButton: false
+                        });
+                    }
                 }, 400);
             }
-        }
-
-        /* ----------------------------------------------------
-           👤 ইউজার রেজিস্ট্রেশন
-        ---------------------------------------------------- */
-        function ensureCurrentUserRegistered() {
-            let userObj = state.users.find(u => String(u.id) === String(state.user.id));
-            if (!userObj) {
-                userObj = {
-                    id: String(state.user.id),
-                    name: state.user.name,
-                    username: state.user.username,
-                    avatar: state.user.avatar,
-                    balance: state.user.balance || 0.00,
-                    totalEarned: state.user.totalEarned || 0.00,
-                    referrals: state.user.referrals || 0,
-                    referredBy: state.user.referredBy || null,
-                    joinedAt: state.user.joinedAt || new Date().toISOString(),
-                    isBanned: state.user.isBanned || false,
-                    targetCycleRefs: state.user.targetCycleRefs || 0,
-                    targetStartTime: state.user.targetStartTime || Date.now()
-                };
-                state.users.push(userObj);
-            } else {
-                userObj.name = state.user.name;
-                userObj.username = state.user.username;
-                if (state.user.avatar) userObj.avatar = state.user.avatar;
-            }
-
-            const bannedScreen = document.getElementById('banned-screen');
-            if (userObj.isBanned && String(userObj.id) !== MASTER_ADMIN_ID) {
-                bannedScreen.classList.remove('hidden');
-            } else {
-                bannedScreen.classList.add('hidden');
-            }
-
-            saveLocalCacheOnly();
         }
 
         /* ----------------------------------------------------
@@ -1070,20 +1095,24 @@
 
             if (allJoined) {
                 document.getElementById('mandatory-channel-gate').classList.add('hidden');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'স্বাগতম!',
-                    text: 'সকল চ্যানেলে সফলভাবে যুক্ত হয়েছেন। অ্যাপ আনলক হয়েছে!',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'স্বাগতম!',
+                        text: 'সকল চ্যানেলে সফলভাবে যুক্ত হয়েছেন। অ্যাপ আনলক হয়েছে!',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'চ্যানেলে জয়েন করা হয়নি!',
-                    html: `আপনি এখনো নিচের চ্যানেলে জয়েন করেননি:<br><b class="text-rose-400">${unjoinedNames.join(', ')}</b><br><br>দয়া করে জয়েন করে আবার ভেরিফাই চাপুন।`,
-                    confirmButtonColor: '#e11d48'
-                });
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'চ্যানেলে জয়েন করা হয়নি!',
+                        html: `আপনি এখনো নিচের চ্যানেলে জয়েন করেননি:<br><b class="text-rose-400">${unjoinedNames.join(', ')}</b><br><br>দয়া করে জয়েন করে আবার ভেরিফাই চাপুন।`,
+                        confirmButtonColor: '#e11d48'
+                    });
+                }
             }
         }
 
@@ -1127,6 +1156,8 @@
         }
 
         function saveLocalCacheOnly() {
+            syncUserWithGlobalList();
+
             localStorage.setItem('globalUsersList', JSON.stringify(state.users));
             localStorage.setItem('globalWithdrawals', JSON.stringify(state.withdrawals));
             localStorage.setItem('tasksList', JSON.stringify(state.tasks));
@@ -1158,6 +1189,7 @@
             userStorageSet('claimedTargets', state.claimedTargets);
             userStorageSet('targetCycleRefs', state.user.targetCycleRefs || 0);
             userStorageSet('targetStartTime', state.user.targetStartTime);
+            userStorageSet('lastDailyClaimTime', state.lastDailyClaimTime);
         }
 
         function saveState() {
@@ -1167,15 +1199,21 @@
         }
 
         function updateUI() {
-            ensureCurrentUserRegistered();
+            syncUserWithGlobalList();
             checkTargetCycle();
             checkDailyAdReset();
 
             const realSupportUrl = formatSupportLink(state.supportLink);
 
-            document.getElementById('current-balance').innerText = (state.user.balance || 0).toFixed(2);
-            document.getElementById('home-total-earned').innerText = (state.user.totalEarned || 0).toFixed(2);
-            document.getElementById('ads-left').innerText = state.adsLeft;
+            // ব্যালেন্স ও মূল স্ট্যাটাস রিয়েলটাইম আপডেট
+            const curBalEl = document.getElementById('current-balance');
+            if (curBalEl) curBalEl.innerText = (parseFloat(state.user.balance) || 0).toFixed(2);
+            
+            const earnedEl = document.getElementById('home-total-earned');
+            if (earnedEl) earnedEl.innerText = (parseFloat(state.user.totalEarned) || 0).toFixed(2);
+
+            const adsLeftEl = document.getElementById('ads-left');
+            if (adsLeftEl) adsLeftEl.innerText = state.adsLeft;
             
             const adMaxLimitEl = document.getElementById('ad-max-limit');
             if (adMaxLimitEl) adMaxLimitEl.innerText = state.adDailyLimit || 50;
@@ -1194,7 +1232,7 @@
             document.getElementById('header-name').innerText = state.user.name;
             document.getElementById('profile-name').innerText = state.user.name;
             document.getElementById('profile-id').innerText = `ID: ${state.user.id}`;
-            document.getElementById('profile-lifetime-earned').innerText = `৳ ${(state.user.totalEarned || 0).toFixed(2)}`;
+            document.getElementById('profile-lifetime-earned').innerText = `৳ ${(parseFloat(state.user.totalEarned) || 0).toFixed(2)}`;
 
             document.getElementById('header-support-btn').href = realSupportUrl;
             document.getElementById('dashboard-support-btn').href = realSupportUrl;
@@ -1237,7 +1275,7 @@
 
             const cooldownMs = (state.dailyBonusHours || 24) * 60 * 60 * 1000;
             const now = Date.now();
-            const elapsed = now - state.lastDailyClaimTime;
+            const elapsed = now - (state.lastDailyClaimTime || 0);
 
             if (elapsed < cooldownMs) {
                 const remaining = cooldownMs - elapsed;
@@ -1260,21 +1298,21 @@
             const cooldownMs = (state.dailyBonusHours || 24) * 60 * 60 * 1000;
             const now = Date.now();
 
-            if (now - state.lastDailyClaimTime < cooldownMs) return;
+            if (now - (state.lastDailyClaimTime || 0) < cooldownMs) return;
 
             const reward = parseFloat(state.dailyBonusAmount) || 1.00;
-            state.user.balance += reward;
-            state.user.totalEarned += reward;
             state.lastDailyClaimTime = now;
             userStorageSet('lastDailyClaimTime', now);
-            saveState();
+            addEarnings(reward);
 
-            Swal.fire({
-                icon: 'success',
-                title: 'অভিনন্দন! 🎉',
-                text: `আপনি ৳ ${reward.toFixed(2)} ফ্রি দৈনিক বোনাস পেয়েছেন!`,
-                confirmButtonColor: '#4f46e5'
-            });
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'অভিনন্দন! 🎉',
+                    text: `আপনি ৳ ${reward.toFixed(2)} ফ্রি দৈনিক বোনাস পেয়েছেন!`,
+                    confirmButtonColor: '#4f46e5'
+                });
+            }
         }
 
         /* ----------------------------------------------------
@@ -1285,7 +1323,7 @@
             const countBadge = document.getElementById('my-ref-count-badge');
             if (!listEl) return;
 
-            const myReferees = state.users.filter(u => String(u.referredBy) === String(state.user.id));
+            const myReferees = state.users.filter(u => String(u && u.referredBy) === String(state.user.id));
             const count = Math.max(myReferees.length, state.user.referrals || 0);
             if (countBadge) countBadge.innerText = `${count} জন`;
 
@@ -1369,7 +1407,7 @@
                 userStorageSet('targetCycleRefs', 0);
                 userStorageSet('claimedTargets', []);
 
-                const userObj = state.users.find(u => String(u.id) === String(state.user.id));
+                const userObj = state.users.find(u => String(u && u.id) === String(state.user.id));
                 if (userObj) {
                     userObj.targetStartTime = now;
                     userObj.targetCycleRefs = 0;
@@ -1465,17 +1503,18 @@
             const currentRefs = state.user.targetCycleRefs || 0;
             if (currentRefs < target.reqRefs) return;
 
-            state.user.balance += parseFloat(target.reward);
-            state.user.totalEarned += parseFloat(target.reward);
             state.claimedTargets.push(targetId);
-            saveState();
+            userStorageSet('claimedTargets', state.claimedTargets);
+            addEarnings(target.reward);
 
-            Swal.fire({
-                icon: 'success',
-                title: 'অভিনন্দন! 🎉',
-                html: `আপনি <b>${target.reqRefs}টি রেফার টার্গেট</b> সফল করায় <b>৳ ${parseFloat(target.reward).toFixed(2)}</b> টার্গেট বোনাস পেয়েছেন!`,
-                confirmButtonColor: '#10b981'
-            });
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'অভিনন্দন! 🎉',
+                    html: `আপনি <b>${target.reqRefs}টি রেফার টার্গেট</b> সফল করায় <b>৳ ${parseFloat(target.reward).toFixed(2)}</b> টার্গেট বোনাস পেয়েছেন!`,
+                    confirmButtonColor: '#10b981'
+                });
+            }
         }
 
         /* ----------------------------------------------------
@@ -1537,6 +1576,7 @@
             window.open(link, '_blank');
             if (!state.clickedTasks.includes(taskId)) {
                 state.clickedTasks.push(taskId);
+                userStorageSet('clickedTasks', state.clickedTasks);
             }
             saveState();
             renderUserTasks();
@@ -1585,17 +1625,20 @@
 
             if (!verified) {
                 state.clickedTasks = state.clickedTasks.filter(id => id !== taskId);
+                userStorageSet('clickedTasks', state.clickedTasks);
                 saveState();
 
                 taskCooldownTimers[taskId] = Date.now() + 10000;
                 renderUserTasks();
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'টাস্ক সম্পন্ন হয়নি!',
-                    html: `বট যাচাই করে দেখেছে <b>আপনি এখনো চ্যানেলে জয়েন করেননি!</b><br><br>অনুগ্রহ করে <b class="text-rose-400">${10} সেকেন্ড পর</b> আবার জয়েন বাটনে চাপ দিন।`,
-                    confirmButtonColor: '#e11d48'
-                });
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'টাস্ক সম্পন্ন হয়নি!',
+                        html: `বট যাচাই করে দেখেছে <b>আপনি এখনো চ্যানেলে জয়েন করেননি!</b><br><br>অনুগ্রহ করে <b class="text-rose-400">${10} সেকেন্ড পর</b> আবার জয়েন বাটনে চাপ দিন।`,
+                        confirmButtonColor: '#e11d48'
+                    });
+                }
 
                 const interval = setInterval(() => {
                     if (!taskCooldownTimers[taskId] || taskCooldownTimers[taskId] <= Date.now()) {
@@ -1612,32 +1655,35 @@
 
             if (!state.completedTasks.includes(taskId)) {
                 state.completedTasks.push(taskId);
+                userStorageSet('completedTasks', state.completedTasks);
             }
-            state.user.balance += reward;
-            state.user.totalEarned += reward;
-            saveState();
+            addEarnings(reward);
 
-            Swal.fire({
-                icon: 'success',
-                title: 'টাস্ক সফল!',
-                text: `৳ ${reward.toFixed(2)} মূল ব্যালেন্সে যোগ হয়েছে!`,
-                confirmButtonColor: '#10b981'
-            });
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'টাস্ক সফল!',
+                    text: `৳ ${parseFloat(reward).toFixed(2)} মূল ব্যালেন্সে যোগ হয়েছে!`,
+                    confirmButtonColor: '#10b981'
+                });
+            }
         }
 
         /* ----------------------------------------------------
-           📺 ADS ENGINE (৫০টি বিজ্ঞাপন দেখার লজিক)
+           📺 ADS ENGINE
         ---------------------------------------------------- */
         function startWatchingAd() {
             checkDailyAdReset();
 
             if (state.adsLeft <= 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'দৈনিক সীমা সমাপ্ত!',
-                    html: `আজকের জন্য আপনার ৫০টি বিজ্ঞাপন দেখা শেষ হয়ে গেছে।<br><br>বাংলাদেশ সময় <b>রাত ১২:০০ টার পর</b> স্বয়ংক্রিয়ভাবে আবার <b>৫০টি অ্যাড</b> যোগ হয়ে যাবে।`,
-                    confirmButtonColor: '#4f46e5'
-                });
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'দৈনিক সীমা সমাপ্ত!',
+                        html: `আজকের জন্য আপনার ৫০টি বিজ্ঞাপন দেখা শেষ হয়ে গেছে।<br><br>বাংলাদেশ সময় <b>রাত ১২:০০ টার পর</b> স্বয়ংক্রিয়ভাবে আবার <b>৫০টি অ্যাড</b> যোগ হয়ে যাবে।`,
+                        confirmButtonColor: '#4f46e5'
+                    });
+                }
                 return;
             }
 
@@ -1686,18 +1732,20 @@
         }
 
         function creditAdReward() {
-            state.user.balance += state.adReward;
-            state.user.totalEarned += state.adReward;
+            const rewardVal = parseFloat(state.adReward) || 0.50;
             state.adsLeft = Math.max(0, state.adsLeft - 1);
-            saveState();
+            userStorageSet('adsLeft', state.adsLeft);
+            addEarnings(rewardVal);
 
-            Swal.fire({
-                icon: 'success',
-                title: `৳ ${state.adReward.toFixed(2)} জমা হয়েছে!`,
-                text: `বিজ্ঞাপনটি সফলভাবে দেখা সম্পন্ন হয়েছে। আজকের আর ${state.adsLeft}টি অ্যাড বাকি আছে।`,
-                timer: 1600,
-                showConfirmButton: false
-            });
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'success',
+                    title: `৳ ${rewardVal.toFixed(2)} জমা হয়েছে!`,
+                    text: `বিজ্ঞাপনটি সফলভাবে দেখা সম্পন্ন হয়েছে। আজকের আর ${state.adsLeft}টি অ্যাড বাকি আছে।`,
+                    timer: 1600,
+                    showConfirmButton: false
+                });
+            }
         }
 
         function copyRefLink() {
@@ -1707,7 +1755,7 @@
 
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    Swal.fire({ icon: 'success', title: 'লিংক কপি হয়েছে!', timer: 1200, showConfirmButton: false });
+                    if (window.Swal) Swal.fire({ icon: 'success', title: 'লিংক কপি হয়েছে!', timer: 1200, showConfirmButton: false });
                 }).catch(() => fallbackCopy(textToCopy));
             } else {
                 fallbackCopy(textToCopy);
@@ -1724,7 +1772,7 @@
             ta.select();
             document.execCommand('copy');
             document.body.removeChild(ta);
-            Swal.fire({ icon: 'success', title: 'লিংক কপি হয়েছে!', timer: 1200, showConfirmButton: false });
+            if (window.Swal) Swal.fire({ icon: 'success', title: 'লিংক কপি হয়েছে!', timer: 1200, showConfirmButton: false });
         }
 
         function shareOnTelegram() {
@@ -1738,7 +1786,7 @@
             if (!container) return;
             container.innerHTML = '';
 
-            const sortedUsers = [...state.users].sort((a, b) => (b.totalEarned || b.balance || 0) - (a.totalEarned || a.balance || 0)).slice(0, 10);
+            const sortedUsers = [...state.users].sort((a, b) => (parseFloat(b.totalEarned) || parseFloat(b.balance) || 0) - (parseFloat(a.totalEarned) || parseFloat(a.balance) || 0)).slice(0, 10);
 
             sortedUsers.forEach((u, index) => {
                 let medal = index === 0 ? '🥇' : (index === 1 ? '🥈' : (index === 2 ? '🥉' : `#${index + 1}`));
@@ -1758,7 +1806,7 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <span class="text-xs font-extrabold text-amber-400 font-mono block">৳ ${(totalEarnedVal || 0).toFixed(2)}</span>
+                        <span class="text-xs font-extrabold text-amber-400 font-mono block">৳ ${(parseFloat(totalEarnedVal) || 0).toFixed(2)}</span>
                     </div>
                 `;
                 container.appendChild(row);
@@ -1781,7 +1829,7 @@
 
             container.innerHTML = '';
             myWithdrawals.forEach(w => {
-                if (w.status === 'Approved') totalApproved += w.amount;
+                if (w.status === 'Approved') totalApproved += parseFloat(w.amount) || 0;
 
                 let statusBadge = '';
                 if (w.status === 'Pending') {
@@ -1799,7 +1847,7 @@
                         <p class="font-bold text-white">${w.method} (${w.number})</p>
                         ${statusBadge}
                     </div>
-                    <span class="font-bold text-slate-200 font-mono">৳ ${w.amount.toFixed(2)}</span>
+                    <span class="font-bold text-slate-200 font-mono">৳ ${(parseFloat(w.amount) || 0).toFixed(2)}</span>
                 `;
                 container.appendChild(item);
             });
@@ -1843,43 +1891,48 @@
         function submitWithdraw() {
             const checkedRadio = document.querySelector('input[name="pay-method"]:checked');
             if (!checkedRadio) {
-                Swal.fire({ icon: 'error', title: 'পেমেন্ট মেথড নির্বাচন করুন', text: 'বিকাশ অথবা নগদ নির্বাচন করুন।' });
+                if (window.Swal) Swal.fire({ icon: 'error', title: 'পেমেন্ট মেথড নির্বাচন করুন', text: 'বিকাশ অথবা নগদ নির্বাচন করুন।' });
                 return;
             }
 
-            if (state.user.balance < state.minWithdraw) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'পর্যাপ্ত ব্যালেন্স নেই!',
-                    html: `উইথড্র করার মতো পর্যাপ্ত ব্যালেন্স আপনার অ্যাকাউন্টে নেই।<br><br>আপনার বর্তমান ব্যালেন্স: <b class="text-rose-400">৳ ${state.user.balance.toFixed(2)}</b><br>সর্বনিম্ন উত্তোলন লিমিট: <b class="text-emerald-400">৳ ${state.minWithdraw.toFixed(2)}</b>`,
-                    confirmButtonText: 'কাজ শুরু করুন',
-                    showCancelButton: true,
-                    cancelButtonText: 'ঠিক আছে',
-                    confirmButtonColor: '#4f46e5'
-                }).then((res) => {
-                    if (res.isConfirmed) {
-                        switchTab('ads');
-                    }
-                });
+            const curBal = parseFloat(state.user.balance) || 0;
+            if (curBal < state.minWithdraw) {
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'পর্যাপ্ত ব্যালেন্স নেই!',
+                        html: `উইথড্র করার মতো পর্যাপ্ত ব্যালেন্স আপনার অ্যাকাউন্টে নেই।<br><br>আপনার বর্তমান ব্যালেন্স: <b class="text-rose-400">৳ ${curBal.toFixed(2)}</b><br>সর্বনিম্ন উত্তোলন লিমিট: <b class="text-emerald-400">৳ ${state.minWithdraw.toFixed(2)}</b>`,
+                        confirmButtonText: 'কাজ শুরু করুন',
+                        showCancelButton: true,
+                        cancelButtonText: 'ঠিক আছে',
+                        confirmButtonColor: '#4f46e5'
+                    }).then((res) => {
+                        if (res.isConfirmed) {
+                            switchTab('ads');
+                        }
+                    });
+                }
                 return;
             }
 
             if (state.requireAllTasksForWithdraw) {
                 const uncompletedTasks = state.tasks.filter(t => !state.completedTasks.includes(t.id));
                 if (uncompletedTasks.length > 0) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'সকল টাস্ক সম্পন্ন করুন!',
-                        html: `টাকা উত্তোলন করার আগে <b>সকল লাইভ টাস্ক সম্পন্ন করা আবশ্যক</b>।<br><br>আপনার এখনো <b class="text-rose-400">${uncompletedTasks.length}টি টাস্ক বাকি</b> আছে!`,
-                        confirmButtonText: 'টাস্ক সম্পন্ন করুন',
-                        showCancelButton: true,
-                        cancelButtonText: 'পরে করব',
-                        confirmButtonColor: '#4f46e5'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            switchTab('tasks');
-                        }
-                    });
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'সকল টাস্ক সম্পন্ন করুন!',
+                            html: `টাকা উত্তোলন করার আগে <b>সকল লাইভ টাস্ক সম্পন্ন করা আবশ্যক</b>।<br><br>আপনার এখনো <b class="text-rose-400">${uncompletedTasks.length}টি টাস্ক বাকি</b> আছে!`,
+                            confirmButtonText: 'টাস্ক সম্পন্ন করুন',
+                            showCancelButton: true,
+                            cancelButtonText: 'পরে করব',
+                            confirmButtonColor: '#4f46e5'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                switchTab('tasks');
+                            }
+                        });
+                    }
                     return;
                 }
             }
@@ -1888,19 +1941,21 @@
             const userRefs = state.user.referrals || 0;
             if (requiredRefs > 0 && userRefs < requiredRefs) {
                 const needed = requiredRefs - userRefs;
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'রেফার লিমিট অপূর্ণ!',
-                    html: `টাকা তুলতে সর্বনিম্ন <b>${requiredRefs}টি সফল রেফার</b> থাকা বাধ্যতামূলক।<br><br>আপনার বর্তমান রেফার: <b>${userRefs} জন</b><br>আরও প্রয়োজন: <b class="text-rose-400">${needed} জন</b>`,
-                    confirmButtonText: 'রেফার করুন',
-                    showCancelButton: true,
-                    cancelButtonText: 'বুঝেছি',
-                    confirmButtonColor: '#6366f1'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        switchTab('referral');
-                    }
-                });
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'রেফার লিমিট অপূর্ণ!',
+                        html: `টাকা তুলতে সর্বনিম্ন <b>${requiredRefs}টি সফল রেফার</b> থাকা বাধ্যতামূলক।<br><br>আপনার বর্তমান রেফার: <b>${userRefs} জন</b><br>আরও প্রয়োজন: <b class="text-rose-400">${needed} জন</b>`,
+                        confirmButtonText: 'রেফার করুন',
+                        showCancelButton: true,
+                        cancelButtonText: 'বুঝেছি',
+                        confirmButtonColor: '#6366f1'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            switchTab('referral');
+                        }
+                    });
+                }
                 return;
             }
 
@@ -1909,21 +1964,22 @@
             const amount = parseFloat(document.getElementById('withdraw-amount').value);
 
             if (!number || number.length < 11) {
-                Swal.fire({ icon: 'error', title: 'সঠিক মোবাইল নম্বর দিন', text: 'অনুগ্রহ করে সঠিক ১১ ডিজিটের অ্যাকাউন্ট মোবাইল নম্বর লিখুন।' });
+                if (window.Swal) Swal.fire({ icon: 'error', title: 'সঠিক মোবাইল নম্বর দিন', text: 'অনুগ্রহ করে সঠিক ১১ ডিজিটের অ্যাকাউন্ট মোবাইল নম্বর লিখুন।' });
                 return;
             }
 
             if (isNaN(amount) || amount < state.minWithdraw) {
-                Swal.fire({ icon: 'warning', title: 'পরিমাণ সঠিক নয়', text: `সর্বনিম্ন উইথড্র লিমিট ৳ ${state.minWithdraw.toFixed(2)} টাকা।` });
+                if (window.Swal) Swal.fire({ icon: 'warning', title: 'পরিমাণ সঠিক নয়', text: `সর্বনিম্ন উইথড্র লিমিট ৳ ${state.minWithdraw.toFixed(2)} টাকা।` });
                 return;
             }
 
-            if (amount > state.user.balance) {
-                Swal.fire({ icon: 'error', title: 'অতিরিক্ত ব্যালেন্স দিয়েছেন', html: `আপনার সর্বোচ্চ ব্যালেন্স <b>৳ ${state.user.balance.toFixed(2)}</b> টাকা।` });
+            if (amount > curBal) {
+                if (window.Swal) Swal.fire({ icon: 'error', title: 'অতিরিক্ত ব্যালেন্স দিয়েছেন', html: `আপনার সর্বোচ্চ ব্যালেন্স <b>৳ ${curBal.toFixed(2)}</b> টাকা।` });
                 return;
             }
 
-            state.user.balance -= amount;
+            state.lastLocalBalanceUpdate = Date.now();
+            state.user.balance = Math.round((curBal - amount) * 100) / 100;
 
             const newWithdraw = {
                 id: Date.now(),
@@ -1943,12 +1999,14 @@
             document.getElementById('withdraw-number').value = '';
             document.getElementById('withdraw-amount').value = '';
 
-            Swal.fire({
-                icon: 'success',
-                title: 'রিকোয়েস্ট সফল!',
-                text: 'আপনার উইথড্র রিকোয়েস্ট সফলভাবে জমা হয়েছে। রিভিউ শেষে দ্রুত পেমেন্ট সম্পন্ন হবে।',
-                confirmButtonColor: '#10b981'
-            });
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'রিকোয়েস্ট সফল!',
+                    text: 'আপনার উইথড্র রিকোয়েস্ট সফলভাবে জমা হয়েছে। রিভিউ শেষে দ্রুত পেমেন্ট সম্পন্ন হবে।',
+                    confirmButtonColor: '#10b981'
+                });
+            }
         }
 
         // 🚀 অ্যাপ ইনিশিয়ালাইজেশন
