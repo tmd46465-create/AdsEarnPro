@@ -13,7 +13,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></scrip>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- ☁️ FIREBASE SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -288,7 +288,14 @@
 
                 <div>
                     <h3 class="font-extrabold text-base text-white tracking-wide">ভিডিও রিওয়ার্ড সিস্টেম</h3>
-                    <p class="text-xs text-slate-400 mt-1">দৈনিক অবশিষ্ট লিমিট: <span class="text-amber-400 font-bold font-mono" id="ads-left">50</span> টি</p>
+                    <p class="text-xs text-slate-400 mt-1">দৈনিক অবশিষ্ট লিমিট: <span class="text-amber-400 font-bold font-mono text-sm" id="ads-left">50</span> / <span id="ad-max-limit" class="font-mono">50</span> টি</p>
+                    
+                    <!-- ⏰ Bangladesh Time Midnight Countdown Timer Badge -->
+                    <div class="mt-2.5 inline-flex items-center gap-1.5 bg-slate-950 border border-indigo-500/30 px-3 py-1.5 rounded-full text-[11px] text-slate-300 shadow-inner">
+                        <i class="fa-solid fa-clock-rotate-left text-amber-400"></i>
+                        <span>পরবর্তী লিমিট রিসেট:</span>
+                        <span id="ad-reset-timer" class="font-mono font-bold text-amber-400">--:--:--</span>
+                    </div>
                 </div>
                 
                 <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800/80 flex justify-between items-center text-xs shadow-inner">
@@ -614,6 +621,13 @@
             { id: 5, reqRefs: 1000, reward: 500.00 }
         ];
 
+        // 🌟 ৫০টি দৈনিক অ্যাড লিমিট কনফিগারেশন
+        let savedDailyAdLimit = parseInt(localStorage.getItem('adDailyLimit'));
+        if (!savedDailyAdLimit || savedDailyAdLimit < 50) {
+            savedDailyAdLimit = 50;
+            localStorage.setItem('adDailyLimit', '50');
+        }
+
         let state = {
             botUsername: localStorage.getItem('botUsername') || 'adsearn_pro_bot',
             botAppName: localStorage.getItem('botAppName') || 'app',
@@ -622,7 +636,7 @@
             firebaseConfig: JSON.parse(localStorage.getItem('firebaseConfig') || '{"apiKey":"","databaseURL":""}'),
             
             adReward: parseFloat(localStorage.getItem('adReward')) || 0.50,
-            adDailyLimit: parseInt(localStorage.getItem('adDailyLimit')) || 50,
+            adDailyLimit: savedDailyAdLimit, // ৫০টি অ্যাড
             refReward: parseFloat(localStorage.getItem('refReward')) || 5.00,
             minWithdraw: parseFloat(localStorage.getItem('minWithdraw')) || 50.00,
             requireAllTasksForWithdraw: (localStorage.getItem('requireAllTasksForWithdraw') !== null) ? (localStorage.getItem('requireAllTasksForWithdraw') === 'true') : true,
@@ -680,6 +694,66 @@
         };
 
         let taskCooldownTimers = {};
+
+        /* ----------------------------------------------------
+           🇧🇩 BANGLADESH MIDNIGHT AD RESET ENGINE (GMT+6)
+        ---------------------------------------------------- */
+        function getBangladeshMidnightCountdown() {
+            const now = new Date();
+            // UTC টাইম বের করা হচ্ছে
+            const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+            // বাংলাদেশ টাইম (UTC + 6 ঘণ্টা)
+            const bdMs = utcMs + (6 * 3600000);
+            const bdNow = new Date(bdMs);
+
+            const year = bdNow.getFullYear();
+            const month = bdNow.getMonth();
+            const date = bdNow.getDate();
+
+            // পরবর্তী বাংলাদেশ রাত ১২:০০:০০ (পরবর্তী দিনের শুরু)
+            const nextBdMidnight = new Date(year, month, date + 1, 0, 0, 0, 0);
+            const diffMs = nextBdMidnight.getTime() - bdMs;
+
+            const bdDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+
+            return {
+                diffMs: Math.max(0, diffMs),
+                bdDateStr: bdDateStr
+            };
+        }
+
+        // রাত ১২টার পর অ্যাড ৫০ টায় অটো রিসেট চেক (ব্যালেন্স অপরিবর্তিত থাকবে)
+        function checkDailyAdReset() {
+            const { bdDateStr } = getBangladeshMidnightCountdown();
+            const lastReset = userStorageGet('lastAdResetDate', null);
+
+            if (lastReset !== bdDateStr) {
+                state.adsLeft = state.adDailyLimit || 50;
+                userStorageSet('lastAdResetDate', bdDateStr);
+                userStorageSet('adsLeft', state.adsLeft);
+                saveLocalCacheOnly();
+
+                const adsLeftEl = document.getElementById('ads-left');
+                if (adsLeftEl) adsLeftEl.innerText = state.adsLeft;
+            }
+        }
+
+        // প্রতি সেকেন্ডে রিসেট হওয়ার বাকি সময় আপডেট
+        function updateAdResetCountdown() {
+            checkDailyAdReset();
+            const { diffMs } = getBangladeshMidnightCountdown();
+            
+            const hours = Math.floor(diffMs / (1000 * 60 * 60));
+            const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+            const formatted = `${String(hours).padStart(2, '0')}ঘণ্টা ${String(mins).padStart(2, '0')}মিনিট ${String(secs).padStart(2, '0')}সেকেন্ড`;
+            const timerEl = document.getElementById('ad-reset-timer');
+            if (timerEl) {
+                timerEl.innerText = formatted;
+            }
+        }
+        setInterval(updateAdResetCountdown, 1000);
 
         /* ----------------------------------------------------
            🌐 REALTIME CLOUD DATABASE ENGINE
@@ -773,6 +847,7 @@
                     if (c.targetBonuses) state.targetBonuses = c.targetBonuses;
                     if (c.paymentMethods) state.paymentMethods = c.paymentMethods;
                     if (c.adReward !== undefined) state.adReward = c.adReward;
+                    if (c.adDailyLimit !== undefined) state.adDailyLimit = Math.max(50, parseInt(c.adDailyLimit) || 50);
                     if (c.refReward !== undefined) state.refReward = c.refReward;
                     if (c.minWithdraw !== undefined) state.minWithdraw = c.minWithdraw;
                     if (c.requireAllTasksForWithdraw !== undefined) state.requireAllTasksForWithdraw = c.requireAllTasksForWithdraw;
@@ -1065,6 +1140,7 @@
             localStorage.setItem('supportLink', state.supportLink);
             localStorage.setItem('botToken', state.botToken);
             localStorage.setItem('adReward', state.adReward);
+            localStorage.setItem('adDailyLimit', state.adDailyLimit);
             localStorage.setItem('refReward', state.refReward);
             localStorage.setItem('minWithdraw', state.minWithdraw);
             localStorage.setItem('requireAllTasksForWithdraw', state.requireAllTasksForWithdraw);
@@ -1092,12 +1168,17 @@
         function updateUI() {
             ensureCurrentUserRegistered();
             checkTargetCycle();
+            checkDailyAdReset();
 
             const realSupportUrl = formatSupportLink(state.supportLink);
 
             document.getElementById('current-balance').innerText = (state.user.balance || 0).toFixed(2);
             document.getElementById('home-total-earned').innerText = (state.user.totalEarned || 0).toFixed(2);
             document.getElementById('ads-left').innerText = state.adsLeft;
+            
+            const adMaxLimitEl = document.getElementById('ad-max-limit');
+            if (adMaxLimitEl) adMaxLimitEl.innerText = state.adDailyLimit || 50;
+
             document.getElementById('ref-count').innerText = state.user.referrals || 0;
             document.getElementById('ref-total-users').innerText = state.user.referrals || 0;
             document.getElementById('ref-total-earned').innerText = ((state.user.referrals || 0) * state.refReward).toFixed(2);
@@ -1513,7 +1594,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'টাস্ক সম্পন্ন হয়নি!',
-                    html: `বট যাচাই করে দেখেছে <b>আপনি এখনো চ্যানেলে জয়েন করেননি!</b><br><br>অনুগ্রহ করে <b class="text-rose-400">১০ সেকেন্ড পর</b> আবার জয়েন বাটনে চাপ দিন।`,
+                    html: `বট যাচাই করে দেখেছে <b>আপনি এখনো চ্যানেলে জয়েন করেননি!</b><br><br>অনুগ্রহ করে <b class="text-rose-400">${10} সেকেন্ড পর</b> আবার জয়েন বাটনে চাপ দিন।`,
                     confirmButtonColor: '#e11d48'
                 });
 
@@ -1546,11 +1627,18 @@
         }
 
         /* ----------------------------------------------------
-           📺 ADS ENGINE
+           📺 ADS ENGINE (৫০টি বিজ্ঞাপন দেখার লজিক)
         ---------------------------------------------------- */
         function startWatchingAd() {
+            checkDailyAdReset();
+
             if (state.adsLeft <= 0) {
-                Swal.fire({ icon: 'warning', title: 'দৈনিক সীমা সমাপ্ত!', text: 'আজকের সব বিজ্ঞাপন দেখা শেষ হয়ে গেছে।' });
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'দৈনিক সীমা সমাপ্ত!',
+                    html: `আজকের জন্য আপনার ৫০টি বিজ্ঞাপন দেখা শেষ হয়ে গেছে।<br><br>বাংলাদেশ সময় <b>রাত ১২:০০ টার পর</b> স্বয়ংক্রিয়ভাবে আবার <b>৫০টি অ্যাড</b> যোগ হয়ে যাবে।`,
+                    confirmButtonColor: '#4f46e5'
+                });
                 return;
             }
 
@@ -1607,8 +1695,8 @@
             Swal.fire({
                 icon: 'success',
                 title: `৳ ${state.adReward.toFixed(2)} জমা হয়েছে!`,
-                text: 'বিজ্ঞাপনটি সফলভাবে দেখা সম্পন্ন হয়েছে।',
-                timer: 1500,
+                text: `বিজ্ঞাপনটি সফলভাবে দেখা সম্পন্ন হয়েছে। আজকের আর ${state.adsLeft}টি অ্যাড বাকি আছে।`,
+                timer: 1600,
                 showConfirmButton: false
             });
         }
@@ -1866,6 +1954,8 @@
 
         // 🚀 অ্যাপ ইনিশিয়ালাইজেশন
         (async function initApp() {
+            checkDailyAdReset();
+            updateAdResetCountdown();
             await CloudDatabase.pull();
             await processInstantReferral();
             updateUI();
